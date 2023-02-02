@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express'
 import { ListPedidoService } from '../services/request/ListPedidoService'
 import { ListPedidoNumberService } from '../services/request/ListPedidoNumberService'
@@ -124,4 +125,3 @@ export default class DailyMovimentController {
     return response.json(execute)
   }
 }
-// 67549 67550

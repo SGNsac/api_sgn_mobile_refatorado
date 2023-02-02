@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { selectSoliComp1, selectSoliComp2 } from '../../queries'
+import { selectSoliCompData } from '../../queries'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
 
 dotenv.config()
@@ -12,30 +13,34 @@ interface IdecodeAcessToken {
 }
 
 interface IRequestBD {
-  SOCO_COD: number,
-  SOCO_DTSOLI: string,
-  SOCO_OBS: string,
-  SOCO_ASSINATURA_1: string,
-  SOCO_USUA_COD_ASS_1: number,
-  SOCO_NUMERO: string,
-  SOCO_QTD_NECE: number,
-  SOCO_ALMO_COD: number,
-  SOCO_MATE_COD: number,
-  ESTO_CUSTO_MEDIO: number,
-  valor_total:number,
-  ASS:string
+    SOCO_COD: number,
+    SOCO_DTSOLI: string,
+    SOCO_OBS: string,
+    SOCO_ASSINATURA_1: string,
+    SOCO_USUA_COD_ASS_1: number,
+    SOCO_NUMERO: string,
+    SOCO_QTD_NECE: number,
+    SOCO_ALMO_COD: number,
+    SOCO_MATE_COD: number,
+    ESTO_CUSTO_MEDIO: number,
+    valor_total: number,
+    ASS: string
 }
 
-export class ListPurchaseOrderService {
-  public async execute (token: string): Promise<IRequestBD[]> {
+export class ListPurchaseOrderDateService {
+  public async execute (token: string, date: string): Promise<IRequestBD[]> {
     const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
 
     const decodeToken = jwt.verify(token, secretAcess) as IdecodeAcessToken
 
     const cod = parseInt(decodeToken.codUser)
 
-    const query2 = selectSoliComp2(cod)
-    const query1 = selectSoliComp1(cod)
+    const query2 = selectSoliCompData(cod, date, '1')
+    const query1 = selectSoliCompData(cod, date, '2')
+
+    console.log('====================================')
+    console.log(query1)
+    console.log('====================================')
 
     const listPurchaseOrder1 = await PedidoEstoqueRepository.query(query1)
     const listPurchaseOrder2 = await PedidoEstoqueRepository.query(query2)

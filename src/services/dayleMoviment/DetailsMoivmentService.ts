@@ -28,18 +28,13 @@ export class DetailsMoivmentService {
 
     if (aplicacao === '') {
       const sql = selectMovimentDetailsData(USUA_SIGLA, data)
-      console.log('====================================')
-      console.log(sql)
-      console.log('====================================')
       const movimentQuery = await MovimentoDiarioRepository.query(sql)
 
       return movimentQuery
     }
 
     const sql = selectMovimentDetailsDataAndApl(USUA_SIGLA, data, aplicacao)
-    console.log('====================================')
-    console.log(sql)
-    console.log('====================================')
+
     const movimentQuery = await MovimentoDiarioRepository.query(sql)
 
     return movimentQuery

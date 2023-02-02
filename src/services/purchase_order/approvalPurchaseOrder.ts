@@ -66,6 +66,7 @@ export class ApprovalPurchaseOrderService {
     }
 
     const sql = updateASSSolicitacao(socoCod, posUsuaCod)
+
     await PedidoEstoqueRepository.query(sql)
     return ({
       message: 'Solicitação aprovada com sucesso',

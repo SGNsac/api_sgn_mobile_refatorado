@@ -51,6 +51,15 @@ export class LoginService {
         refreshToken: ''
       })
     }
+
+    if (existsUser.USUA_BLOQ !== 'N') {
+      return ({
+        message: 'Úsuario bloqueado',
+        error: true,
+        status: 400,
+        refreshToken: ''
+      })
+    }
     const refreshToken = jwt.sign(
       {
         sigla

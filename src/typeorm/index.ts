@@ -15,9 +15,9 @@ export const AppDataSource = new DataSource({
     trustServerCertificate: true
   },
   entities: [
-    'C:\\Users\\Reinaldo\\Documents\\api_sgn_mobile_refatorado\\src\\typeorm\\entities\\*.ts'
+    './src/typeorm/entities/*.ts'
   ],
   migrations: [
-    'C:\\Users\\Reinaldo\\Documents\\api_sgn_mobile_refatorado\\src\\typeorm\\migrations\\*.ts'
+    './src/typeorm/migrations/*.ts'
   ]
 })

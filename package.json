@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/server.ts",
-    "migration:generate": "typeorm-ts-node-commonjs -d C:\\Users\\Reinaldo\\Documents\\api_sgn_mobile_refatorado\\src\\typeorm\\index.ts migration:generate C:\\Users\\Reinaldo\\Documents\\api_sgn_mobile_refatorado\\src\\typeorm\\migrations\\default",
-    "migration:run": "typeorm-ts-node-commonjs -d C:\\Users\\Reinaldo\\Documents\\api_sgn_mobile_refatorado\\src\\typeorm\\index.ts migration:run"
+    "migration:generate": "typeorm-ts-node-commonjs -d ./src/typeorm/index.ts migration:generate ./src/typeorm/migrations/default",
+    "migration:run": "typeorm-ts-node-commonjs -d ./src/typeorm/index.ts  migration:run"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
