@@ -21,7 +21,7 @@ export class PurchaseOrderController {
     const listPurchaseOrderServiceExec = await listPurchaseOrderService.execute(acessToken)
 
     response.json(listPurchaseOrderServiceExec)
-  }// ApprovalPurchaseOrderService
+  }
 
   public async approvalOrderPurchase (request: Request, response: Response) {
     const authHeader = request.headers.authorization
@@ -47,9 +47,9 @@ export class PurchaseOrderController {
       await approvalPurchaseOrderService.execute(
         acessToken,
         USUA_SENHA_APP,
-        item[0],
         item[1],
-        item[2]
+        item[0],
+        item[3]
       )
     })
 

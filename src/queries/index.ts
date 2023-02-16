@@ -380,13 +380,15 @@ export const selectPedidoEstoque1 = (usuaCod: string) => {
     INNER JOIN
         EMPRESA
     ON
-        EMPR_COD = PEDI_EMPR_COD
+      EMPR_COD = PEDI_EMPR_COD
     WHERE
-        PEDI_TIPO = 'C'
+      PEDI_TIPO = 'C'
     AND
-        PEDI_USUA_COD_ASS_1 =   ${usuaCod}
+      PEDI_USUA_COD_ASS_1 =   ${usuaCod}
     AND 
-        PEDI_ASSINATURA_1 != 'S'
+      PEDI_ASSINATURA_1 != 'S'
+    AND
+      PEDI_STATUS != 'AP'
     ORDER BY
         PEDI_DATA DESC`
 }
@@ -418,11 +420,13 @@ export const selectPedidoEstoque2 = (usuaCod: string) => {
     ON
         EMPR_COD = PEDI_EMPR_COD
     WHERE
-        PEDI_STATUS = 'N'
-    AND
         PEDI_USUA_COD_ASS_2 =   ${usuaCod}
     AND 
         PEDI_ASSINATURA_2 != 'S'
+    AND 
+      PEDI_ASSINATURA_1 = 'S'
+    AND
+      PEDI_STATUS != 'AP'
     ORDER BY
         PEDI_DATA DESC`
 }
@@ -454,11 +458,15 @@ export const selectPedidoEstoque3 = (usuaCod: string) => {
     ON
         EMPR_COD = PEDI_EMPR_COD
     WHERE
-        PEDI_STATUS = 'N'
-    AND
         PEDI_USUA_COD_ASS_3 =   ${usuaCod}
     AND 
         PEDI_ASSINATURA_3 != 'S'
+    AND 
+      PEDI_ASSINATURA_2 = 'S'
+    AND 
+      PEDI_ASSINATURA_1 = 'S'
+    AND
+      PEDI_STATUS != 'AP'
     ORDER BY
         PEDI_DATA DESC`
 }
@@ -490,11 +498,17 @@ export const selectPedidoEstoque4 = (usuaCod: string) => {
     ON
         EMPR_COD = PEDI_EMPR_COD
     WHERE
-        PEDI_STATUS = 'N'
+      PEDI_USUA_COD_ASS_4 =   ${usuaCod}
     AND 
-        PEDI_USUA_COD_ASS_4 =   ${usuaCod}
+      PEDI_ASSINATURA_4 != 'S'
     AND 
-        PEDI_ASSINATURA_4 != 'S'
+      PEDI_ASSINATURA_3 = 'S'
+    AND 
+      PEDI_ASSINATURA_2 = 'S'
+    AND 
+      PEDI_ASSINATURA_1 = 'S'
+    AND
+      PEDI_STATUS != 'AP'
     ORDER BY
         PEDI_DATA DESC
     `
@@ -603,11 +617,17 @@ export const searchNumero4 = (usuaCod: string, pediNumero: string) => {
         ON
             EMPR_COD = PEDI_EMPR_COD
         WHERE
-            PEDI_STATUS = 'N'
+            PEDI_STATUS != 'AP'
         AND 
             PEDI_USUA_COD_ASS_4 =   ${usuaCod}
         AND 
             PEDI_ASSINATURA_4 != 'S'
+        AND 
+            PEDI_ASSINATURA_3 = 'S'
+        AND 
+            PEDI_ASSINATURA_2 = 'S'
+        AND 
+            PEDI_ASSINATURA_1= 'S'
         AND
             PEDI_NUMERO = '${pediNumero}'
         ORDER BY
@@ -642,11 +662,15 @@ export const searchNumero3 = (usuaCod: string, pediNumero: string) => {
           ON
               EMPR_COD = PEDI_EMPR_COD
           WHERE
-              PEDI_STATUS = 'N'
+              PEDI_STATUS != 'AP'
           AND 
               PEDI_USUA_COD_ASS_3 =   ${usuaCod}
           AND 
               PEDI_ASSINATURA_3 != 'S'
+          AND 
+            PEDI_ASSINATURA_2 = 'S'
+          AND 
+            PEDI_ASSINATURA_1= 'S'
           AND
               PEDI_NUMERO = '${pediNumero}'
           ORDER BY
@@ -681,11 +705,14 @@ export const searchNumero2 = (usuaCod: string, pediNumero: string) => {
           ON
               EMPR_COD = PEDI_EMPR_COD
           WHERE
-              PEDI_STATUS = 'N'
+              PEDI_STATUS != 'AP'
           AND 
               PEDI_USUA_COD_ASS_2 =   ${usuaCod}
           AND 
               PEDI_ASSINATURA_2 != 'S'
+
+          AND 
+            PEDI_ASSINATURA_1= 'S'
           AND
               PEDI_NUMERO = '${pediNumero}'
           ORDER BY
@@ -720,7 +747,7 @@ export const searchNumero1 = (usuaCod: string, pediNumero: string) => {
             ON
                 EMPR_COD = PEDI_EMPR_COD
             WHERE
-                PEDI_STATUS = 'N'
+                PEDI_STATUS != 'AP'
             AND 
                 PEDI_USUA_COD_ASS_1 =   ${usuaCod}
             AND 
@@ -759,7 +786,7 @@ export const searchForn1 = (usuaCod: string, fornNome: string) => {
               ON
                   EMPR_COD = PEDI_EMPR_COD
               WHERE
-                  PEDI_STATUS = 'N'
+                  PEDI_STATUS != 'AP'
               AND 
                   PEDI_USUA_COD_ASS_1 =   ${usuaCod}
               AND 
@@ -798,11 +825,13 @@ export const searchForn2 = (usuaCod: string, fornNome: string) => {
                 ON
                     EMPR_COD = PEDI_EMPR_COD
                 WHERE
-                    PEDI_STATUS = 'N'
+                    PEDI_STATUS != 'AP'
                 AND 
                     PEDI_USUA_COD_ASS_2 =   ${usuaCod}
                 AND 
                     PEDI_ASSINATURA_2 != 'S'
+                 AND 
+                    PEDI_ASSINATURA_1= 'S'
                 AND
                     FORN_NOME LIKE '%${fornNome}%'
                 ORDER BY
@@ -837,11 +866,15 @@ export const searchForn3 = (usuaCod: string, fornNome: string) => {
         ON
             EMPR_COD = PEDI_EMPR_COD
         WHERE
-            PEDI_STATUS = 'N'
+            PEDI_STATUS != 'AP'
         AND 
             PEDI_USUA_COD_ASS_3 =   ${usuaCod}
         AND 
             PEDI_ASSINATURA_3 != 'S'
+        AND 
+            PEDI_ASSINATURA_2 = 'S'
+        AND 
+            PEDI_ASSINATURA_1= 'S'
         AND
             FORN_NOME LIKE '%${fornNome}%'
         ORDER BY
@@ -877,11 +910,17 @@ export const searchForn4 = (usuaCod: string, fornNome: string) => {
           ON
               EMPR_COD = PEDI_EMPR_COD
           WHERE
-              PEDI_STATUS = 'N'
+              PEDI_STATUS != 'AP'
           AND 
               PEDI_USUA_COD_ASS_4 =   ${usuaCod}
           AND 
               PEDI_ASSINATURA_4 != 'S'
+          AND 
+            PEDI_ASSINATURA_3 = 'S'
+          AND 
+            PEDI_ASSINATURA_2 = 'S'
+          AND 
+            PEDI_ASSINATURA_1= 'S'
           AND
               FORN_NOME LIKE '%${fornNome}%'
           ORDER BY
@@ -922,7 +961,7 @@ export const searchFunc1 = (usuaCod: string, funcNome: string) => {
         ON
             PESS_COD = PEDI_PESS_COD
         WHERE
-            PEDI_STATUS = 'N'
+            PEDI_STATUS != 'AP'
         AND 
             PEDI_USUA_COD_ASS_1 =   ${usuaCod}
         AND 
@@ -967,11 +1006,13 @@ export const searchFunc2 = (usuaCod: string, funcNome: string) => {
         ON
             PESS_COD = PEDI_PESS_COD
         WHERE
-            PEDI_STATUS = 'N'
+            PEDI_STATUS != 'AP'
         AND 
             PEDI_USUA_COD_ASS_2 =   ${usuaCod}
         AND 
             PEDI_ASSINATURA_2 != 'S'
+        AND 
+            PEDI_ASSINATURA_1= 'S'
         AND
             PESS_NOME LIKE '%${funcNome}%'
         ORDER BY
@@ -1012,11 +1053,15 @@ export const searchFunc3 = (usuaCod: string, funcNome: string) => {
         ON
             PESS_COD = PEDI_PESS_COD
         WHERE
-            PEDI_STATUS = 'N'
+            PEDI_STATUS != 'AP'
         AND 
             PEDI_USUA_COD_ASS_3 =   ${usuaCod}
         AND 
             PEDI_ASSINATURA_3 != 'S'
+        AND 
+            PEDI_ASSINATURA_2 = 'S'
+        AND 
+            PEDI_ASSINATURA_1= 'S'
         AND
             PESS_NOME LIKE '%${funcNome}%'
         ORDER BY
@@ -1057,11 +1102,17 @@ export const searchFunc4 = (usuaCod: string, funcNome: string) => {
         ON
             PESS_COD = PEDI_PESS_COD
         WHERE
-            PEDI_STATUS = 'N'
+            PEDI_STATUS != 'AP'
         AND 
             PEDI_USUA_COD_ASS_4 =   ${usuaCod}
         AND 
             PEDI_ASSINATURA_4 != 'S'
+        AND 
+            PEDI_ASSINATURA_3 = 'S'
+        AND 
+            PEDI_ASSINATURA_2 = 'S'
+        AND 
+            PEDI_ASSINATURA_1= 'S'
         AND
             PESS_NOME LIKE '%${funcNome}%'
         ORDER BY
@@ -1070,54 +1121,18 @@ export const searchFunc4 = (usuaCod: string, funcNome: string) => {
         `
 }
 
-export const updateASS1 = (pediCod: string) => {
+export const updatePedidoASS = (pediCod: string, pos:string, sqlQuery : string) => {
   return `
     UPDATE 
         PEDIDO_ESTOQUE
     SET
-        PEDI_ASSINATURA_1 = 'S',
-        PEDI_DATA_APROVACAO1 = GETDATE()
+        PEDI_ASSINATURA_${pos} = 'S',
+        ${sqlQuery}
+        PEDI_DATA_APROVACAO${pos} = GETDATE()
 
     WHERE
         PEDI_COD = ${pediCod}
   `
-}
-
-export const updateASS2 = (pediCod: string) => {
-  return `
-      UPDATE 
-          PEDIDO_ESTOQUE
-      SET
-          PEDI_ASSINATURA_2 = 'S'
-            PEDI_DATA_APROVACAO2 = GETDATE()
-      WHERE
-          PEDI_COD = ${pediCod}
-    `
-}
-
-export const updateASS3 = (pediCod: string) => {
-  return `
-        UPDATE 
-            PEDIDO_ESTOQUE
-        SET
-            PEDI_ASSINATURA_3 = 'S',
-            PEDI_DATA_APROVACAO3 = GETDATE()
-
-        WHERE
-            PEDI_COD = ${pediCod}
-      `
-}
-
-export const updateASS4 = (pediCod: string) => {
-  return `
-          UPDATE 
-              PEDIDO_ESTOQUE
-          SET
-              PEDI_ASSINATURA_4 = 'S',
-              PEDI_DATA_APROVACAO4 = GETDATE()
-          WHERE
-              PEDI_COD = ${pediCod}
-        `
 }
 
 export const searchEmprUsua = (usuaCod: string) => {
@@ -1155,20 +1170,7 @@ export const verifyPassword = (cod: string) => {
   `
 }
 
-export const updateASS = (pediCod: string, posCod: string) => {
-  return `
-    UPDATE 
-        PEDIDO_ESTOQUE
-    SET
-        PEDI_ASSINATURA_${posCod} = 'S',
-        PEDI_DATA_APROVACAO${posCod} = GETDATE()
-
-    WHERE
-        PEDI_COD = ${pediCod}
-  `
-}
-
-export const selectSoliComp1 = (usuaCod:number) => {
+export const selectSoliComp1 = (usuaCod: number) => {
   return `
     SELECT 
       SOCO_COD,
@@ -1242,6 +1244,8 @@ export const selectSoliComp1 = (usuaCod:number) => {
       ESTO_MATE_COD = SOCO_MATE_COD
     AND 
       SOCO_ASSINATURA_1 != 'S'
+    AND
+      SOCO_STATUS != 'AP'
     AND 
       SOCO_USUA_COD_ASS_1 = ${usuaCod}
   `
@@ -1321,12 +1325,16 @@ export const selectSoliComp2 = (usuaCod: number) => {
       ESTO_MATE_COD = SOCO_MATE_COD
     AND 
       SOCO_ASSINATURA_2 != 'S'
+    AND
+      SOCO_STATUS != 'AP'
+    AND 
+      SOCO_ASSINATURA_1 = 'S'
     AND 
       SOCO_USUA_COD_ASS_2 = ${usuaCod}
   `
 }
 
-export const selectSoliCompNumero = (usuaCod: number, socoNUMERO: string, pos:string) => {
+export const selectSoliCompNumero = (usuaCod: number, socoNUMERO: string, pos: string) => {
   return `
     SELECT 
       SOCO_COD,
@@ -1343,7 +1351,7 @@ export const selectSoliCompNumero = (usuaCod: number, socoNUMERO: string, pos:st
         SELECT 
           (ISNULL(ESTO_CUSTO_MEDIO,0) * SOCO_QTD_NECE)
       ) as valor_total,
-      '1' AS ASS,
+      '${pos}' AS ASS,
       CERE_SIGLA,
       CERE_NOME,
       PESS_NOME,
@@ -1404,6 +1412,8 @@ export const selectSoliCompNumero = (usuaCod: number, socoNUMERO: string, pos:st
       SOCO_USUA_COD_ASS_${pos} = ${usuaCod}
     AND 
       SOCO_NUMERO = '${socoNUMERO}'
+    AND 
+      SOCO_STATUS != 'AP'
   `
 }
 
@@ -1424,7 +1434,7 @@ export const selectSoliCompAlmoxarifado = (usuaCod: number, almoDesc: string, po
         SELECT 
           (ISNULL(ESTO_CUSTO_MEDIO,0) * SOCO_QTD_NECE)
       ) as valor_total,
-      '1' AS ASS,
+      '${pos}' AS ASS,
       CERE_SIGLA,
       CERE_NOME,
       PESS_NOME,
@@ -1485,6 +1495,8 @@ export const selectSoliCompAlmoxarifado = (usuaCod: number, almoDesc: string, po
       SOCO_USUA_COD_ASS_${pos} = ${usuaCod}
     AND 
       ALMO_DESC LIKE '%${almoDesc}%'
+    AND 
+      SOCO_STATUS != 'AP'
   `
 }
 
@@ -1505,7 +1517,7 @@ export const selectSoliCompCR = (usuaCod: number, cereNome: string, pos: string)
         SELECT 
           (ISNULL(ESTO_CUSTO_MEDIO,0) * SOCO_QTD_NECE)
       ) as valor_total,
-      '1' AS ASS,
+      '${pos}' AS ASS,
       CERE_SIGLA,
       CERE_NOME,
       PESS_NOME,
@@ -1566,6 +1578,8 @@ export const selectSoliCompCR = (usuaCod: number, cereNome: string, pos: string)
       SOCO_USUA_COD_ASS_${pos} = ${usuaCod}
     AND 
       CERE_NOME LIKE '%${cereNome}%'
+    AND 
+      SOCO_STATUS != 'AP'
   `
 }
 
@@ -1586,7 +1600,7 @@ export const selectSoliCompSetorCompras = (usuaCod: number, SECO_DESC: string, p
         SELECT 
           (ISNULL(ESTO_CUSTO_MEDIO,0) * SOCO_QTD_NECE)
       ) as valor_total,
-      '1' AS ASS,
+      '${pos}' AS ASS,
       CERE_SIGLA,
       CERE_NOME,
       PESS_NOME,
@@ -1645,6 +1659,8 @@ export const selectSoliCompSetorCompras = (usuaCod: number, SECO_DESC: string, p
       SOCO_ASSINATURA_${pos} != 'S'
     AND 
       SOCO_USUA_COD_ASS_${pos} = ${usuaCod}
+    AND 
+      SOCO_STATUS != 'AP'
     AND 
       SECO_DESC LIKE '%${SECO_DESC}%'
   `
@@ -1667,7 +1683,7 @@ export const selectSoliCompData = (usuaCod: number, SOCO_DTSOLI: string, pos: st
         SELECT 
           (ISNULL(ESTO_CUSTO_MEDIO,0) * SOCO_QTD_NECE)
       ) as valor_total,
-      '1' AS ASS,
+      '${pos}' AS ASS,
       CERE_SIGLA,
       CERE_NOME,
       PESS_NOME,
@@ -1727,19 +1743,1086 @@ export const selectSoliCompData = (usuaCod: number, SOCO_DTSOLI: string, pos: st
     AND 
       SOCO_USUA_COD_ASS_${pos} = ${usuaCod}
     AND 
+      SOCO_STATUS != 'AP'
+    AND 
       SOCO_DTSOLI = '${SOCO_DTSOLI}'
   `
 }
 
-export const updateASSSolicitacao = (socoCod: string, posCod: string) => {
+export const updateASSSolicitacao = (socoCod: string, posCod: string, sqlQuery: string) => {
   return `
     UPDATE 
         SOLICITACAO_COMPRA
     SET
         SOCO_ASSINATURA_${posCod} = 'S',
+        ${sqlQuery}
         SOCO_DATA_APROVACAO${posCod} = GETDATE()
 
     WHERE
         SOCO_COD = ${socoCod}
+  `
+}
+
+export const selectServiceContract1 = (usuaCod: string) => {
+  return `
+    SELECT 
+      COCS_DT_INICIO,
+      COCS_DT_FIM,
+      COCS_FORN_COD,
+      COCS_TERC_COD,
+      COCS_CERE_COD,
+      COCS_SERV_COD,
+      COCS_QUANTIDADE,
+      COCS_VLR_UNIT,
+      COCS_FORMA_PAGAMENTO,
+      COCS_PRAZO,
+      COCS_EMPR_COD,
+      COCS_FILI_COD,
+      COCS_DATA_APROVACAO1,
+      COCS_DT_CONTRATO,
+      COCS_TIPO_MEDICAO,
+      SERV_DESC,
+      FORN_NOME,
+      '1' AS ASS,
+      COCS_COD,
+      (
+        SELECT 
+          SUM(ICCS_QUANTIDADE * ICCS_VLR_UNIT)
+        FROM
+          ITEM_CONTRATO_COMPRA_SERVICO
+        WHERE
+          ICCS_COCS_COD = COCS_COD     
+      ) AS VALOR_TOTAL,
+      EMPR_NOME,
+      FILI_NOME_FANTASIA                                                            
+    FROM
+      CONTRATO_COMPRA_SERVICO
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = COCS_FORN_COD
+    INNER JOIN
+      SERVICOS
+    ON
+      SERV_COD = COCS_SERV_COD
+    INNER JOIN
+      CENTRO_RESULTADO
+    ON
+      CERE_COD = COCS_CERE_COD
+        INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = COCS_EMPR_COD
+    INNER JOIN
+      FILIAL
+    ON
+      FILI_COD = COCS_FILI_COD
+    WHERE
+      COCS_USUA_COD_ASS_1 = ${usuaCod}
+    AND 
+      COCS_ASSINATURA_1 != 'S'
+    AND
+      COCS_STATUS != 'AP'
+  `
+}
+
+export const selectServiceContract2 = (usuaCod: string) => {
+  return `
+    SELECT 
+      COCS_DT_INICIO,
+      COCS_DT_FIM,
+      COCS_FORN_COD,
+      COCS_TERC_COD,
+      COCS_CERE_COD,
+      COCS_SERV_COD,
+      COCS_QUANTIDADE,
+      COCS_VLR_UNIT,
+      COCS_FORMA_PAGAMENTO,
+      COCS_PRAZO,
+      COCS_EMPR_COD,
+      COCS_FILI_COD,
+      COCS_DATA_APROVACAO1,
+      COCS_DT_CONTRATO,
+      COCS_TIPO_MEDICAO,
+      SERV_DESC,
+      FORN_NOME,
+      '2' AS ASS,
+      COCS_COD,
+      (
+        SELECT 
+          SUM(ICCS_QUANTIDADE * ICCS_VLR_UNIT)
+        FROM
+          ITEM_CONTRATO_COMPRA_SERVICO
+        WHERE
+          ICCS_COCS_COD = COCS_COD     
+      ) AS VALOR_TOTAL,
+      EMPR_NOME,
+      FILI_NOME_FANTASIA                                                                
+    FROM
+      CONTRATO_COMPRA_SERVICO
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = COCS_FORN_COD
+    INNER JOIN
+      SERVICOS
+    ON
+      SERV_COD = COCS_SERV_COD
+    INNER JOIN
+      CENTRO_RESULTADO
+    ON
+      CERE_COD = COCS_CERE_COD
+        INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = COCS_EMPR_COD
+    INNER JOIN
+      FILIAL
+    ON
+      FILI_COD = COCS_FILI_COD
+    WHERE
+      COCS_USUA_COD_ASS_2 = ${usuaCod}
+    AND 
+      COCS_ASSINATURA_2 != 'S'
+    AND 
+      COCS_ASSINATURA_1 = 'S'
+    AND
+      COCS_STATUS != 'AP'
+  `
+}
+
+export const selectServiceContract3 = (usuaCod: string) => {
+  return `
+    SELECT 
+      COCS_DT_INICIO,
+      COCS_DT_FIM,
+      COCS_FORN_COD,
+      COCS_TERC_COD,
+      COCS_CERE_COD,
+      COCS_SERV_COD,
+      COCS_QUANTIDADE,
+      COCS_VLR_UNIT,
+      COCS_FORMA_PAGAMENTO,
+      COCS_PRAZO,
+      COCS_EMPR_COD,
+      COCS_FILI_COD,
+      COCS_DATA_APROVACAO1,
+      COCS_DT_CONTRATO,
+      COCS_TIPO_MEDICAO,
+      SERV_DESC,
+      FORN_NOME,
+      '3' AS ASS,
+      COCS_COD,
+      (
+        SELECT 
+          SUM(ICCS_QUANTIDADE * ICCS_VLR_UNIT)
+        FROM
+          ITEM_CONTRATO_COMPRA_SERVICO
+        WHERE
+          ICCS_COCS_COD = COCS_COD     
+      ) AS VALOR_TOTAL,
+      EMPR_NOME,
+      FILI_NOME_FANTASIA                                                               
+    FROM
+      CONTRATO_COMPRA_SERVICO
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = COCS_FORN_COD
+    INNER JOIN
+      SERVICOS
+    ON
+      SERV_COD = COCS_SERV_COD
+    INNER JOIN
+      CENTRO_RESULTADO
+    ON
+      CERE_COD = COCS_CERE_COD
+          INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = COCS_EMPR_COD
+    INNER JOIN
+      FILIAL
+    ON
+      FILI_COD = COCS_FILI_COD
+    WHERE
+      COCS_USUA_COD_ASS_3 = ${usuaCod}
+    AND 
+      COCS_ASSINATURA_3 != 'S'
+    AND 
+      COCS_ASSINATURA_1 = 'S'
+    AND
+      COCS_ASSINATURA_2 = 'S'
+    AND
+      COCS_STATUS != 'AP'
+  `
+}
+export const selectServiceContract4 = (usuaCod: string) => {
+  return `
+    SELECT 
+      COCS_DT_INICIO,
+      COCS_DT_FIM,
+      COCS_FORN_COD,
+      COCS_TERC_COD,
+      COCS_CERE_COD,
+      COCS_SERV_COD,
+      COCS_QUANTIDADE,
+      COCS_VLR_UNIT,
+      COCS_FORMA_PAGAMENTO,
+      COCS_PRAZO,
+      COCS_EMPR_COD,
+      COCS_FILI_COD,
+      COCS_DATA_APROVACAO1,
+      COCS_DT_CONTRATO,
+      COCS_TIPO_MEDICAO,
+      SERV_DESC,
+      FORN_NOME,
+      '4' AS ASS,
+      COCS_COD,
+      (
+        SELECT 
+          SUM(ICCS_QUANTIDADE * ICCS_VLR_UNIT)
+        FROM
+          ITEM_CONTRATO_COMPRA_SERVICO
+        WHERE
+          ICCS_COCS_COD = COCS_COD     
+      ) AS VALOR_TOTAL,
+      EMPR_NOME,
+      FILI_NOME_FANTASIA
+    FROM
+      CONTRATO_COMPRA_SERVICO
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = COCS_FORN_COD
+    INNER JOIN
+      SERVICOS
+    ON
+      SERV_COD = COCS_SERV_COD
+    INNER JOIN
+      CENTRO_RESULTADO
+    ON
+      CERE_COD = COCS_CERE_COD
+    INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = COCS_EMPR_COD
+    INNER JOIN
+      FILIAL
+    ON
+      FILI_COD = COCS_FILI_COD
+    WHERE
+      COCS_USUA_COD_ASS_4 = ${usuaCod}
+    AND 
+      COCS_ASSINATURA_4 != 'S'
+    AND 
+      COCS_ASSINATURA_1 = 'S'
+    AND
+      COCS_ASSINATURA_2 = 'S'
+    AND
+      COCS_ASSINATURA_3 = 'S'
+    AND
+      COCS_STATUS != 'AP'      
+  `
+}
+
+export const countNumAprov = (cod: string) => {
+  return `
+    SELECT
+      (
+        (
+          SELECT
+            COUNT(COCS_ASSINATURA_1)
+          FROM
+            CONTRATO_COMPRA_SERVICO
+          WHERE
+            COCS_COD = ${cod}
+          AND 
+            COCS_ASSINATURA_1 = 'S' 
+        )
+          +
+        (
+          SELECT
+            COUNT(COCS_ASSINATURA_2)
+          FROM
+            CONTRATO_COMPRA_SERVICO
+          WHERE
+            COCS_COD = ${cod}
+          AND 
+            COCS_ASSINATURA_2 = 'S' 
+        )
+          +
+        (
+          SELECT
+              COUNT(COCS_ASSINATURA_3)
+          FROM
+              CONTRATO_COMPRA_SERVICO
+          WHERE
+              COCS_COD = ${cod}
+          AND 
+            COCS_ASSINATURA_3 = 'S' 
+        )
+          +
+        (
+          SELECT
+              COUNT(COCS_ASSINATURA_4)
+          FROM
+              CONTRATO_COMPRA_SERVICO
+          WHERE
+              COCS_COD = ${cod}
+          AND 
+            COCS_ASSINATURA_4 = 'S' 
+        )
+      ) AS NUM
+    FROM
+      CONTRATO_COMPRA_SERVICO
+    WHERE
+        COCS_COD = ${cod}
+  `
+}
+
+export const attContratoCompraServico = (cod: string, ass:string, statusQuery: string) => {
+  return `
+    UPDATE
+      CONTRATO_COMPRA_SERVICO
+    SET 
+      COCS_ASSINATURA_${ass} = 'S',
+      ${statusQuery}
+      COCS_DATA_APROVACAO${ass} = GETDATE()
+    WHERE
+      COCS_COD = ${cod}
+  `
+}
+
+export const selectBoletim1 = (usuaCod: string) => {
+  return `
+    SELECT
+      BOCS_COD,
+      FORN_NOME,
+      BOCS_DATA,
+      BOCS_DT_INICIO,
+      BOCS_DT_FIM,
+      BOCS_STATUS,
+      BOCS_OBS,
+      BOCS_USUA_COD_ASS_1,
+      BOCS_ASSINATURA_1,
+      BOCS_NUMERO,
+      BOCS_DT_VENC,
+      '1' AS ASS,
+      (
+        SELECT
+          SUM(BCSI_QUANTIDADE)
+        FROM
+          BOLETIM_CONTRATO_SERVICO_ITENS
+        WHERE
+          BCSI_BOCS_COD = BOCS_COD
+      ) AS QTD,
+           (
+        SELECT
+          SUM(BCSI_VLR_UNIT)
+        FROM
+          BOLETIM_CONTRATO_SERVICO_ITENS
+        WHERE
+          BCSI_BOCS_COD = BOCS_COD
+      ) 
+    AS 
+      VAL_UNIT
+    FROM
+      BOLETIM_CONTRATO_SERVICO
+    INNER JOIN
+      CONTRATO_COMPRA_SERVICO
+    ON
+      BOCS_COCS_COD =  COCS_COD 
+    INNER JOIN
+      FORNECEDOR
+    ON
+      COCS_FORN_COD =  FORN_COD
+    WHERE 
+      BOCS_USUA_COD_ASS_1 = ${usuaCod}
+  `
+}
+
+export const selectBoletim2 = (usuaCod: string) => {
+  return `
+    SELECT
+      BOCS_COD,
+      FORN_NOME,
+      BOCS_DATA,
+      BOCS_DT_INICIO,
+      BOCS_DT_FIM,
+      BOCS_STATUS,
+      BOCS_OBS,
+      BOCS_USUA_COD_ASS_2,
+      BOCS_ASSINATURA_2,
+      BOCS_NUMERO,
+      BOCS_DT_VENC,
+      '2' AS ASS,
+      (
+        SELECT
+          SUM(BCSI_QUANTIDADE)
+        FROM
+          BOLETIM_CONTRATO_SERVICO_ITENS
+        WHERE
+          BCSI_BOCS_COD = BOCS_COD
+      ) AS QTD,
+           (
+        SELECT
+          SUM(BCSI_VLR_UNIT)
+        FROM
+          BOLETIM_CONTRATO_SERVICO_ITENS
+        WHERE
+          BCSI_BOCS_COD = BOCS_COD
+      ) 
+    AS 
+      VAL_UNIT
+    FROM
+      BOLETIM_CONTRATO_SERVICO
+    INNER JOIN
+      CONTRATO_COMPRA_SERVICO
+    ON
+      BOCS_COCS_COD =  COCS_COD 
+    INNER JOIN
+      FORNECEDOR
+    ON
+      COCS_FORN_COD =  FORN_COD
+    WHERE 
+      BOCS_USUA_COD_ASS_2 = ${usuaCod}
+    AND
+      BOCS_ASSINATURA_1 = 'S'
+  `
+}
+
+export const boletimMedicaoDetalhe = (codigo : string) => {
+  return `
+    SELECT
+      BCSI_SERV_COD,
+      SERV_DESC,
+      BCSI_BOCS_COD,
+      BCSI_QUANTIDADE,
+      BCSI_VLR_UNIT
+    FROM 
+      BOLETIM_CONTRATO_SERVICO_ITENS
+    INNER JOIN
+      SERVICOS
+    ON 
+      BCSI_SERV_COD = SERV_COD
+    WHERE
+      BCSI_BOCS_COD = ${codigo}
+  `
+}
+
+export const updateBoletim = (pos: string, statusUpdate: string, cod: string) => {
+  return `
+    UPDATE 
+      BOLETIM_CONTRATO_SERVICO
+    SET 
+      BOCS_ASSINATURA_${pos} = 'S',
+      ${statusUpdate}
+      BOCS_DATA_APROVACAO${pos} = GETDATE()
+    WHERE
+      BOCS_COD = ${cod}
+  `
+}
+
+export const countNumAprovaBoletim = (cod : string) => {
+  return `
+    SELECT
+      (      
+        (
+        SELECT
+          COUNT(BOCS_USUA_COD_ASS_1)
+        FROM
+          BOLETIM_CONTRATO_SERVICO
+        WHERE
+          BOCS_COD = ${cod}
+        AND 
+          BOCS_ASSINATURA_1 = 'S' 
+        )
+          +
+        ( 
+          SELECT
+            COUNT(BOCS_USUA_COD_ASS_2)
+          FROM
+            BOLETIM_CONTRATO_SERVICO
+          WHERE
+            BOCS_COD = ${cod}
+          AND
+            BOCS_ASSINATURA_2 = 'S'
+        )
+      ) as NUM
+    FROM
+      BOLETIM_CONTRATO_SERVICO
+    WHERE
+      BOCS_COD = ${cod}
+  `
+}
+
+export const countNumAprovaSoliCompra = (cod: string) => {
+  return `
+    SELECT
+      (      
+        (
+        SELECT
+          COUNT(SOCO_USUA_COD_ASS_1)
+        FROM
+          SOLICITACAO_COMPRA
+        WHERE
+          SOCO_COD = ${cod}
+        AND 
+          SOCO_ASSINATURA_1 = 'S' 
+        )
+          +
+        ( 
+          SELECT
+            COUNT(SOCO_USUA_COD_ASS_2)
+          FROM
+            SOLICITACAO_COMPRA
+          WHERE
+            SOCO_COD = ${cod}
+          AND
+            SOCO_ASSINATURA_2 = 'S'
+        )
+      ) as NUM
+    FROM
+      SOLICITACAO_COMPRA
+    WHERE
+      SOCO_COD = ${cod}
+  `
+}
+
+export const countNumAprovaPedido = (cod: string) => {
+  return `
+    SELECT
+      (      
+        (
+          SELECT
+            COUNT(PEDI_USUA_COD_ASS_1)
+          FROM
+            PEDIDO_ESTOQUE
+          WHERE
+            PEDI_COD = ${cod}
+          AND 
+            PEDI_ASSINATURA_1 = 'S' 
+        )
+          +
+        ( 
+          SELECT
+            COUNT(PEDI_USUA_COD_ASS_2)
+          FROM
+            PEDIDO_ESTOQUE
+          WHERE
+            PEDI_COD = ${cod}
+          AND 
+            PEDI_ASSINATURA_2 = 'S' 
+        ) 
+          +
+        (
+          SELECT
+            COUNT(PEDI_USUA_COD_ASS_3)
+          FROM
+            PEDIDO_ESTOQUE
+          WHERE
+            PEDI_COD = ${cod}
+          AND 
+            PEDI_ASSINATURA_3 = 'S' 
+        )
+          +
+        (
+          SELECT
+            COUNT(PEDI_USUA_COD_ASS_4)
+          FROM
+            PEDIDO_ESTOQUE
+          WHERE
+            PEDI_COD = ${cod}
+          AND 
+            PEDI_ASSINATURA_4 = 'S' 
+        )
+      ) as NUM
+    FROM
+      PEDIDO_ESTOQUE
+    WHERE
+      PEDI_COD = ${cod}
+  `
+}
+
+export const selectPefiPejuPess = () => {
+  return `
+    SELECT
+      PESS_NOME AS NOME,
+      PESS_END AS ENDERECO, 
+      CIDA_DESC AS CIDADE,
+      CIDA_UNFE_SIGLA AS UF,
+      PESS_EMAIL AS EMAIL,
+      PESS_FONE AS TELEFONE
+    FROM 
+      PESSOAL
+    INNER JOIN 
+      CIDADE
+    ON
+      PESS_CIDA_COD = CIDA_COD 
+    WHERE
+      PESS_FONE != ''
+      
+    UNION
+
+    SELECT
+      PEFI_NOME AS NOME,
+      BAIR_DESC AS ENDERECO, 
+      CIDA_DESC AS CIDADE,
+      CIDA_UNFE_SIGLA AS UF,
+      PEFI_EMAIL AS EMAIL,
+      PEFI_TEL AS TELEFONE
+    FROM 
+      PESSOA_FISICA
+    INNER JOIN 
+      CIDADE
+    ON
+      CIDA_COD = PEFI_CIDA_COD
+    INNER JOIN
+      BAIRRO
+    ON
+      BAIR_COD = PEFI_BAIR_COD
+    WHERE
+      PEFI_TEL != ''
+
+    UNION
+
+    SELECT 
+      PEJU_RAZAO_SOCIAL AS NOME,
+      BAIR_DESC AS ENDERECO, 
+      CIDA_DESC AS CIDADE,
+      CIDA_UNFE_SIGLA AS UF,
+      PEJU_EMAIL AS EMAIL,
+      PEJU_TEL AS TELEFONE
+    FROM 
+      PESSOA_JURIDICA 
+    INNER JOIN 
+      CIDADE
+    ON
+      CIDA_COD = PEJU_CIDA_COD
+    INNER JOIN
+      BAIRRO
+    ON
+      BAIR_COD = PEJU_BAIR_COD
+    WHERE
+      PEJU_TEL != ''
+  `
+}
+
+export const selectAditivoContrato1 = (cod : string, queryString: string) => {
+  return `
+      SELECT
+      ADCS_COD,
+      ADCS_QUANTIDADE,
+      ADCS_VLR_UNIT,
+      ADCS_DESC,
+      ADCS_COCS_COD,
+      ADCS_APROVADO,
+      ADCS_SERV_COD,
+      SERV_COD,
+      ADCS_DATA_INI,
+      ADCS_DATA_FIM,
+      ADCS_OBS,
+      ADCS_NUMERO,
+      (ADCS_QUANTIDADE * ADCS_VLR_UNIT) 
+    AS 
+      VALOR_TOTAL,
+      '1' 
+    AS 
+      ASS
+    FROM
+      ADITIVO_CONTRATO_SERVICO
+    INNER JOIN 
+      SERVICOS
+    ON
+      SERV_COD = ADCS_SERV_COD
+    WHERE
+      ADCS_ASSINATURA_1 != 'S'
+    AND
+      ADCS_USUA_COD_ASS_1 = ${cod}
+    ${queryString}
+  `
+}
+
+export const selectAditivoContrato2 = (cod: string, queryString: string) => {
+  return `
+      SELECT
+      ADCS_COD,
+      ADCS_QUANTIDADE,
+      ADCS_VLR_UNIT,
+      ADCS_DESC,
+      ADCS_COCS_COD,
+      ADCS_APROVADO,
+      ADCS_SERV_COD,
+      SERV_COD,
+      ADCS_DATA_INI,
+      ADCS_DATA_FIM,
+      ADCS_OBS,
+      ADCS_NUMERO,
+      (ADCS_QUANTIDADE * ADCS_VLR_UNIT) 
+    AS 
+      VALOR_TOTAL,
+      '2' 
+    AS 
+      ASS
+    FROM
+      ADITIVO_CONTRATO_SERVICO
+    INNER JOIN 
+      SERVICOS
+    ON
+      SERV_COD = ADCS_SERV_COD
+    WHERE
+      ADCS_ASSINATURA_1 = 'S'
+    AND
+      ADCS_ASSINATURA_2 != 'S'
+    AND
+      ADCS_USUA_COD_ASS_2 = ${cod}
+    ${queryString}
+  `
+}
+
+export const selectAditivoContrato3 = (cod: string, queryString: string) => {
+  return `
+      SELECT
+      ADCS_COD,
+      ADCS_QUANTIDADE,
+      ADCS_VLR_UNIT,
+      ADCS_DESC,
+      ADCS_COCS_COD,
+      ADCS_APROVADO,
+      ADCS_SERV_COD,
+      SERV_COD,
+      ADCS_DATA_INI,
+      ADCS_DATA_FIM,
+      ADCS_OBS,
+      ADCS_NUMERO,
+      (ADCS_QUANTIDADE * ADCS_VLR_UNIT) 
+    AS 
+      VALOR_TOTAL,
+      '3' 
+    AS 
+      ASS
+    FROM
+      ADITIVO_CONTRATO_SERVICO
+    INNER JOIN 
+      SERVICOS
+    ON
+      SERV_COD = ADCS_SERV_COD
+    WHERE
+      ADCS_ASSINATURA_1 = 'S'
+    AND
+      ADCS_ASSINATURA_2 = 'S'
+    AND
+      ADCS_ASSINATURA_3 != 'S'
+    AND
+      ADCS_USUA_COD_ASS_3 = ${cod}
+    ${queryString}
+  `
+}
+
+export const selectAditivoContrato4 = (cod: string, queryString: string) => {
+  return `
+      SELECT
+      ADCS_COD,
+      ADCS_QUANTIDADE,
+      ADCS_VLR_UNIT,
+      ADCS_DESC,
+      ADCS_COCS_COD,
+      ADCS_APROVADO,
+      ADCS_SERV_COD,
+      SERV_COD,
+      ADCS_DATA_INI,
+      ADCS_DATA_FIM,
+      ADCS_OBS,
+      ADCS_NUMERO,
+      (ADCS_QUANTIDADE * ADCS_VLR_UNIT) 
+    AS 
+      VALOR_TOTAL,
+      '4' 
+    AS 
+      ASS
+    FROM
+      ADITIVO_CONTRATO_SERVICO
+    INNER JOIN 
+      SERVICOS
+    ON
+      SERV_COD = ADCS_SERV_COD
+    WHERE
+      ADCS_ASSINATURA_1 = 'S'
+    AND
+      ADCS_ASSINATURA_2 = 'S'
+    AND
+      ADCS_ASSINATURA_3 = 'S'
+    AND
+      ADCS_ASSINATURA_4 != 'S'
+    AND
+      ADCS_USUA_COD_ASS_4 = ${cod}
+    ${queryString}
+  `
+}
+
+export const updateAditivoContrato = (pos:string, cod:string, queryString:string) => {
+  return `
+    UPDATE 
+      ADITIVO_CONTRATO_SERVICO
+    SET 
+      ADCS_ASSINATURA_${pos} = 'S'
+      ${queryString}
+    WHERE
+      ADCS_COD = ${cod}
+  `
+}
+
+export const countNumAprovAditivoContrato = (cod: string) => {
+  return `
+    SELECT
+      (
+        (
+          SELECT
+            COUNT(ADCS_ASSINATURA_1)
+          FROM
+            ADITIVO_CONTRATO_SERVICO
+          WHERE
+            ADCS_COD = ${cod}
+          AND 
+            ADCS_ASSINATURA_1 = 'S' 
+        )
+          +
+        (
+          SELECT
+            COUNT(ADCS_ASSINATURA_2)
+          FROM
+            ADITIVO_CONTRATO_SERVICO
+          WHERE
+            ADCS_COD = ${cod}
+          AND 
+            ADCS_ASSINATURA_2 = 'S' 
+        )
+          +
+        (
+          SELECT
+              COUNT(ADCS_ASSINATURA_3)
+          FROM
+              ADITIVO_CONTRATO_SERVICO
+          WHERE
+              ADCS_COD = ${cod}
+          AND 
+            ADCS_ASSINATURA_3 = 'S' 
+        )
+          +
+        (
+          SELECT
+              COUNT(ADCS_ASSINATURA_4)
+          FROM
+              ADITIVO_CONTRATO_SERVICO
+          WHERE
+              ADCS_COD = ${cod}
+          AND 
+            ADCS_ASSINATURA_4 = 'S' 
+        )
+      ) AS NUM
+    FROM
+      ADITIVO_CONTRATO_SERVICO
+    WHERE
+        ADCS_COD = ${cod}
+  `
+}
+
+export const updatePRCS = (pos: string, cod: string, queryString: string) => {
+  return `
+    UPDATE 
+      PRAZO_CONTRATO_SERVICO 
+    SET 
+      PRCS_ASSINATURA_${pos} = 'S'
+      ${queryString}
+    WHERE
+      PRCS_COD = ${cod}
+  `
+}
+
+export const selectPrazoContratoServico1 = (cod: string, queryString : string) => {
+  return `
+    SELECT
+      PRCS_COCS_COD,
+      PRCS_COD,
+      PRCS_DATA_INI,
+      FORN_NOME,
+      PRCS_DATA_CADASTRO,
+      PRCS_DATA_FIM,
+      PRCS_OBS,
+      PRCS_NUMERO,
+      '1' AS ASS
+    FROM
+      PRAZO_CONTRATO_SERVICO
+    INNER JOIN 
+      CONTRATO_COMPRA_SERVICO
+    ON
+      PRCS_COCS_COD =  COCS_COD
+    INNER JOIN
+      FORNECEDOR
+    ON
+      COCS_FORN_COD =  FORN_COD
+    WHERE
+      PRCS_USUA_COD_ASS_1 = ${cod}
+    AND
+      PRCS_ASSINATURA_1 != 'S'
+    ${queryString}
+  `
+}
+
+export const selectPrazoContratoServico2 = (cod: string, queryString: string) => {
+  return `
+    SELECT
+      PRCS_COCS_COD,
+      PRCS_COD,
+      PRCS_DATA_INI,
+      FORN_NOME,
+      PRCS_DATA_CADASTRO,
+      PRCS_DATA_FIM,
+      PRCS_OBS,
+      PRCS_NUMERO,
+      '2' AS ASS
+    FROM
+      PRAZO_CONTRATO_SERVICO
+    INNER JOIN 
+      CONTRATO_COMPRA_SERVICO
+    ON
+      PRCS_COCS_COD =  COCS_COD
+    INNER JOIN
+      FORNECEDOR
+    ON
+      COCS_FORN_COD =  FORN_COD
+    WHERE
+      PRCS_USUA_COD_ASS_2 = ${cod}
+    AND
+      PRCS_ASSINATURA_1 = 'S'
+    AND
+      PRCS_ASSINATURA_2 != 'S'
+    ${queryString}
+  `
+}
+
+export const selectPrazoContratoServico3 = (cod: string, queryString: string) => {
+  return `
+    SELECT
+      PRCS_COCS_COD,
+      PRCS_COD,
+      PRCS_DATA_INI,
+      FORN_NOME,
+      PRCS_DATA_CADASTRO,
+      PRCS_DATA_FIM,
+      PRCS_OBS,
+      PRCS_NUMERO,
+      '3' AS ASS
+    FROM
+      PRAZO_CONTRATO_SERVICO
+    INNER JOIN 
+      CONTRATO_COMPRA_SERVICO
+    ON
+      PRCS_COCS_COD =  COCS_COD
+    INNER JOIN
+      FORNECEDOR
+    ON
+      COCS_FORN_COD =  FORN_COD
+    WHERE
+      PRCS_USUA_COD_ASS_3 = ${cod}
+    AND
+      PRCS_ASSINATURA_1 = 'S'
+    AND
+      PRCS_ASSINATURA_2 = 'S'
+    AND
+      PRCS_ASSINATURA_3 != 'S'     
+    ${queryString}
+  `
+}
+
+export const selectPrazoContratoServico4 = (cod: string, queryString: string) => {
+  return `
+    SELECT
+      PRCS_COCS_COD,
+      PRCS_COD,
+      PRCS_DATA_INI,
+      FORN_NOME,
+      PRCS_DATA_CADASTRO,
+      PRCS_DATA_FIM,
+      PRCS_OBS,
+      PRCS_NUMERO,
+      '4' AS ASS
+    FROM
+      PRAZO_CONTRATO_SERVICO
+    INNER JOIN 
+      CONTRATO_COMPRA_SERVICO
+    ON
+      PRCS_COCS_COD =  COCS_COD
+    INNER JOIN
+      FORNECEDOR
+    ON
+      COCS_FORN_COD =  FORN_COD
+    WHERE
+      PRCS_USUA_COD_ASS_4 = ${cod}
+    AND
+      PRCS_ASSINATURA_1 = 'S'
+    AND
+      PRCS_ASSINATURA_2 = 'S'
+    AND
+      PRCS_ASSINATURA_3 = 'S'      
+    AND
+      PRCS_ASSINATURA_4 != 'S'
+    ${queryString}
+  `
+}
+
+export const countNumAprovAditivoContratoPR = (cod: string) => {
+  return `
+    SELECT
+      (
+        (
+          SELECT
+            COUNT(PRCS_ASSINATURA_1)
+          FROM
+            PRAZO_CONTRATO_SERVICO
+          WHERE
+            PRCS_COD = ${cod}
+          AND 
+            PRCS_ASSINATURA_1 = 'S' 
+        )
+          +
+        (
+          SELECT
+            COUNT(PRCS_ASSINATURA_2)
+          FROM
+            PRAZO_CONTRATO_SERVICO
+          WHERE
+            PRCS_COD = ${cod}
+          AND 
+            PRCS_ASSINATURA_2 = 'S' 
+        )
+          +
+        (
+          SELECT
+              COUNT(PRCS_ASSINATURA_3)
+          FROM
+              PRAZO_CONTRATO_SERVICO
+          WHERE
+              PRCS_COD = ${cod}
+          AND 
+            PRCS_ASSINATURA_3 = 'S' 
+        )
+          +
+        (
+          SELECT
+              COUNT(PRCS_ASSINATURA_4)
+          FROM
+              PRAZO_CONTRATO_SERVICO
+          WHERE
+              PRCS_COD = ${cod}
+          AND 
+            PRCS_ASSINATURA_4 = 'S' 
+        )
+      ) AS NUM
+    FROM
+      PRAZO_CONTRATO_SERVICO
+    WHERE
+        PRCS_COD = ${cod}
   `
 }

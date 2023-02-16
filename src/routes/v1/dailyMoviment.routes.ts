@@ -11,3 +11,5 @@ routerDailyMoviment.get('/cmbAplicacao', isAuthenticatedAcess, DailyMoviment.lis
 routerDailyMoviment.get('/filter/aplicacao/:aplicacao', isAuthenticatedAcess, DailyMoviment.FilterAplicacaoNome)
 routerDailyMoviment.get('/filter/aplicacaoData', isAuthenticatedAcess, DailyMoviment.FilterAplicacaoDataAndApl)
 routerDailyMoviment.get('/details/aplicacaoData', isAuthenticatedAcess, DailyMoviment.DetailsAplicacaoDataAndApl)
+//  4704
+// 5025

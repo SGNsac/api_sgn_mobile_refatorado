@@ -38,10 +38,6 @@ export class ListPurchaseOrderDateService {
     const query2 = selectSoliCompData(cod, date, '1')
     const query1 = selectSoliCompData(cod, date, '2')
 
-    console.log('====================================')
-    console.log(query1)
-    console.log('====================================')
-
     const listPurchaseOrder1 = await PedidoEstoqueRepository.query(query1)
     const listPurchaseOrder2 = await PedidoEstoqueRepository.query(query2)
 

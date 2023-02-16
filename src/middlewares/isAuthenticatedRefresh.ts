@@ -1,19 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import AppError from '../errors/AppError'
 
 const isAuthenticated = (
   request: Request,
   response: Response,
   next: NextFunction
-):void => {
+): any => {
   const authHeader = request.headers.authorization
 
   dotenv.config()
   const secret = process.env.TOKEN_SECRET_REFRESH + ''
   if (!authHeader) {
-    throw new AppError('JWT is missing')
+    return response.status(400).json({ message: 'TOKEN IS MISSING' })
   }
   const [, token] = authHeader.split(' ')
   try {
@@ -21,7 +21,7 @@ const isAuthenticated = (
     const decodeToken = jwt.verify(token, secret)
     return next()
   } catch {
-    throw new AppError('JWT is invalid')
+    return response.status(400).json({ message: 'TOKEN IS INVALID' })
   }
 }
 

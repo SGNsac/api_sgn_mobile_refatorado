@@ -5,7 +5,7 @@ export default class CompanyController {
   public async list (request: Request, response: Response): Promise<Response> {
     const authHeader = request.headers.authorization
     if (!authHeader) {
-      throw new AppError('Token is missing')
+      return response.status(400).json({ message: 'TOKEN IS MISSING' })
     }
     const [, acessToken] = authHeader.split(' ')
 

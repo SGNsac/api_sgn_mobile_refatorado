@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { updateASSSolicitacao } from '../../queries'
+import { countNumAprovaSoliCompra, updateASSSolicitacao } from '../../queries'
 import { UsuarioRepository } from '../../typeorm/repository/usuarioRepositories'
 import bcrypt from 'bcrypt'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
@@ -65,7 +65,31 @@ export class ApprovalPurchaseOrderService {
       })
     }
 
-    const sql = updateASSSolicitacao(socoCod, posUsuaCod)
+    const sqlContNumAprovaS = countNumAprovaSoliCompra(socoCod)
+
+    const countNumAprovaS = await PedidoEstoqueRepository.query(sqlContNumAprovaS)
+
+    const sqlAprovaNumPage = await PedidoEstoqueRepository.query(`
+    SELECT 
+      page_num_aprovacoes_solic,
+      page_todas_aprovacoes_solic,
+    FROM 
+      PARAMETROS_GERAIS
+    `)
+
+    let statusSQL = ''
+
+    if (sqlAprovaNumPage[0].page_todas_aprovacoes_solic === 'S') {
+      if (sqlAprovaNumPage[0].page_num_aprovacoes_solic === 1) {
+        statusSQL = "SOCO_STATUS = 'AP',"
+      } else if (sqlAprovaNumPage[0].page_num_aprovacoes_solic === 2 && countNumAprovaS[0].NUM === 1) {
+        statusSQL = "SOCO_STATUS = 'AP',"
+      }
+    } else {
+      statusSQL = "SOCO_STATUS = 'AP',"
+    }
+
+    const sql = updateASSSolicitacao(socoCod, posUsuaCod, statusSQL)
 
     await PedidoEstoqueRepository.query(sql)
     return ({
