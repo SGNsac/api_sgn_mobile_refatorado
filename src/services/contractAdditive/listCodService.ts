@@ -1,4 +1,4 @@
-import { selectAditivoContrato1, selectAditivoContrato2, selectAditivoContrato3, selectAditivoContrato4 } from '../../queries'
+import { selectAditivoContrato1, selectAditivoContrato2, selectAditivoContrato3, selectAditivoContrato4 } from '../../queries/contractAdditive'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
 import jwt from 'jsonwebtoken'
 

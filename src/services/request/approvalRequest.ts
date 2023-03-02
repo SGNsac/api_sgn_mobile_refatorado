@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { countNumAprovaPedido, updatePedidoASS } from '../../queries'
 import { UsuarioRepository } from '../../typeorm/repository/usuarioRepositories'
 import bcrypt from 'bcrypt'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
+import { countNumAprovaPedido, updatePedidoASS } from '../../queries/request'
 
 dotenv.config()
 
@@ -20,7 +20,7 @@ interface IResponse{
 }
 
 export class ApprovalRequestService {
-  public async execute (TOKEN: string, USUA_SENHA_APP: string, posUsuaCod: string, pediCod : string): Promise<IResponse> {
+  public async execute (TOKEN: string, USUA_SENHA_APP: string, posUsuaCod: string, pediCod: string): Promise<IResponse> {
     const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
 
     const decodeToken = jwt.verify(TOKEN, secretAcess) as IdecodeAcessToken
@@ -67,16 +67,16 @@ export class ApprovalRequestService {
 
     if (valCountNumAprovaPedidoBD[0].PAGE_TODAS_APROVACOES_PEDIDO === 'S') {
       if (valCountNumAprovaPedidoBD[0].PAGE_NUM_APROVACOES_PEDIDO === 1) {
-        sqlQuery = "PEDI_STATUS = 'AP',"
+        sqlQuery = "PEDI_STATUS = 'A',"
       } else if (valCountNumAprovaPedidoBD[0].PAGE_NUM_APROVACOES_PEDIDO === 2 && valCountNumAprovaPedido[0].NUM === 1) {
-        sqlQuery = "PEDI_STATUS = 'AP',"
+        sqlQuery = "PEDI_STATUS = 'A',"
       } else if (valCountNumAprovaPedidoBD[0].PAGE_NUM_APROVACOES_PEDIDO === 3 && valCountNumAprovaPedido[0].NUM === 2) {
-        sqlQuery = "PEDI_STATUS = 'AP',"
+        sqlQuery = "PEDI_STATUS = 'A',"
       } else if (valCountNumAprovaPedidoBD[0].PAGE_NUM_APROVACOES_PEDIDO === 4 && valCountNumAprovaPedido[0].NUM === 3) {
-        sqlQuery = "PEDI_STATUS = 'AP',"
+        sqlQuery = "PEDI_STATUS = 'A',"
       }
     } else {
-      sqlQuery = "PEDI_STATUS = 'AP',"
+      sqlQuery = "PEDI_STATUS = 'A',"
     }
 
     const sql = updatePedidoASS(pediCod, posUsuaCod, sqlQuery)

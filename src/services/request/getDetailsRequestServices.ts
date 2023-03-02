@@ -1,4 +1,4 @@
-import { selectPedidosItemServico } from '../../queries'
+import { selectPedidosItemServico } from '../../queries/request'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
 
 export class GetDetailsRequestServices {

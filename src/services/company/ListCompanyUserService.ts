@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import { EmpresaContaRepository } from '../../typeorm/repository/empresaRepositories'
-import { searchEmprUsua } from '../../queries'
 import jwt from 'jsonwebtoken'
+import { searchEmprUsua } from '../../queries/branch'
 
 dotenv.config()
 

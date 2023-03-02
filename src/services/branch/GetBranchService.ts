@@ -1,5 +1,5 @@
+import { searchEmprUsua } from '../../queries/branch'
 import { FilialRepository } from '../../typeorm/repository/filialRepositories'
-import { searchEmprUsua } from '../../queries'
 
 interface IResponse {
     DEBITO: number,

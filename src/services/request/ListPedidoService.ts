@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
-import { selectPedidoEstoque1, selectPedidoEstoque2, selectPedidoEstoque3, selectPedidoEstoque4 } from '../../queries'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import { selectPedidoEstoque1, selectPedidoEstoque2, selectPedidoEstoque3, selectPedidoEstoque4 } from '../../queries/request'
 
 dotenv.config()
 
@@ -19,11 +19,14 @@ export class ListPedidoService {
     const decodeToken = jwt.verify(TOKEN, secretAcess) as IdecodeAcessToken
 
     const cod = decodeToken.codUser
+
     const sql1 = selectPedidoEstoque1(cod)
     const sql2 = selectPedidoEstoque2(cod)
     const sql3 = selectPedidoEstoque3(cod)
     const sql4 = selectPedidoEstoque4(cod)
-    const array:any = []
+
+    const array: any = []
+
     const listPedido1 = await PedidoEstoqueRepository.query(sql1)
     const listPedido2 = await PedidoEstoqueRepository.query(sql2)
     const listPedido3 = await PedidoEstoqueRepository.query(sql3)

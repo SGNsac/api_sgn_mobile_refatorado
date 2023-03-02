@@ -1,9 +1,9 @@
-import { countNumAprovAditivoContrato, updateAditivoContrato } from '../../queries'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import { UsuarioRepository } from '../../typeorm/repository/usuarioRepositories'
+import { countNumAprovAditivoContrato, updateAditivoContrato } from '../../queries/contractAdditive'
 dotenv.config()
 
 interface IAdcsResponse {

@@ -1,9 +1,9 @@
-import { attContratoCompraServico, countNumAprov } from '../../queries'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import { UsuarioRepository } from '../../typeorm/repository/usuarioRepositories'
+import { attContratoCompraServico, countNumAprov } from '../../queries/serviceContract'
 dotenv.config()
 
 interface ICocsResponse {
@@ -17,7 +17,7 @@ interface IdecodeAcessToken {
   codUser: string
 }
 export class ApprovalServiceContract {
-  public async execute (TOKEN: string, ass: string, codCocs: string, password:string): Promise<ICocsResponse> {
+  public async execute (TOKEN: string, ass: string, codCocs: string, password:string, valTotal: string): Promise<ICocsResponse> {
     const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
 
     const decodeToken = jwt.verify(TOKEN, secretAcess) as IdecodeAcessToken
@@ -51,6 +51,14 @@ export class ApprovalServiceContract {
         message: 'Úsuario bloqueado',
         erro: true,
         status: 400
+      })
+    }
+
+    if (existsUser.USUA_VALOR_APROVA_CONT_SERV < parseFloat(valTotal)) {
+      return ({
+        message: `${codCocs} Úsuario não pode aprovar um contrato com valor tão alto`,
+        erro: true,
+        status: 401
       })
     }
 

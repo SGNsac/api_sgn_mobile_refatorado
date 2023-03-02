@@ -2,8 +2,8 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import { UsuarioRepository } from '../../typeorm/repository/usuarioRepositories'
-import { countNumAprovaBoletim, updateBoletim } from '../../queries'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
+import { countNumAprovaBoletim, updateBoletim } from '../../queries/serviceContractBulletin'
 dotenv.config()
 
 interface IResponse {

@@ -1,6 +1,6 @@
-import { selectServiceContract1, selectServiceContract2, selectServiceContract3, selectServiceContract4 } from '../../queries'
 import jwt from 'jsonwebtoken'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
+import { selectServiceContract1, selectServiceContract2, selectServiceContract3, selectServiceContract4 } from '../../queries/serviceContract'
 
 interface IdecodeAcessToken {
   refreshToken: string,
@@ -30,16 +30,16 @@ interface ICocs{
 }
 
 export class ListServiceContractServices {
-  public async execute (token: string): Promise<ICocs[]> {
+  public async execute (token: string, queryString: string): Promise<ICocs[]> {
     const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
 
     const decodeToken = jwt.verify(token, secretAcess) as IdecodeAcessToken
 
     const cod = parseInt(decodeToken.codUser)
-    const sql = selectServiceContract1(cod + '')
-    const sql2 = selectServiceContract2(cod + '')
-    const sql3 = selectServiceContract3(cod + '')
-    const sql4 = selectServiceContract4(cod + '')
+    const sql = selectServiceContract1(cod + '', queryString)
+    const sql2 = selectServiceContract2(cod + '', queryString)
+    const sql3 = selectServiceContract3(cod + '', queryString)
+    const sql4 = selectServiceContract4(cod + '', queryString)
 
     const array: ICocs[] = []
     const listContract1 = await PedidoEstoqueRepository.query(sql)

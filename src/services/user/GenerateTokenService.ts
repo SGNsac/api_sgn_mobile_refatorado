@@ -1,5 +1,4 @@
 import { UsuarioRepository } from '../../typeorm/repository/usuarioRepositories'
-import AppError from '../../errors/AppError'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
@@ -37,7 +36,7 @@ export class GenerateTokenService {
       },
       secretAcess,
       {
-        expiresIn: '60000ms'
+        expiresIn: '2h'
       }
     )
 

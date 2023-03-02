@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { selectSoliComp1, selectSoliComp2 } from '../../queries'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
+import { selectSoliComp1, selectSoliComp2 } from '../../queries/purchaseOrder'
 
 dotenv.config()
 
@@ -43,11 +43,11 @@ export class ListPurchaseOrderService {
     const orderArray: IRequestBD[] = []
 
     if (listPurchaseOrder1.length > 0) {
-      listPurchaseOrder1.map((pos: any) => orderArray.push(pos))
+      listPurchaseOrder1.map((pos: IRequestBD) => orderArray.push(pos))
     }
 
     if (listPurchaseOrder2.length > 0) {
-      listPurchaseOrder2.map((pos: any) => orderArray.push(pos))
+      listPurchaseOrder2.map((pos: IRequestBD) => orderArray.push(pos))
     }
 
     return orderArray

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { selectSoliCompData } from '../../queries'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
+import { selectSoliCompData } from '../../queries/purchaseOrder'
 
 dotenv.config()
 

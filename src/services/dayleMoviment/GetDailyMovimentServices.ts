@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import { MovimentoDiarioRepository } from '../../typeorm/repository/movimentoDiarioRepositories'
-import { selectMovimentacao } from '../../queries'
 import jwt from 'jsonwebtoken'
+import { selectMovimentacao } from '../../queries/movDiaria'
 
 dotenv.config()
 

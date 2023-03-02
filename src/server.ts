@@ -6,7 +6,7 @@ import cors from 'cors'
 import { AppDataSource } from './typeorm/index'
 import AppError from './errors/AppError'
 import dotenv from 'dotenv'
-import routerV1 from './routes/v1/index.routes'
+import { routerV1 } from './routes/v1/index.routes'
 
 dotenv.config()
 

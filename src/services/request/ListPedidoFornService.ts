@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
-import { searchForn1, searchForn2, searchForn3, searchForn4 } from '../../queries'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import { searchForn1, searchForn2, searchForn3, searchForn4 } from '../../queries/request'
 
 dotenv.config()
 

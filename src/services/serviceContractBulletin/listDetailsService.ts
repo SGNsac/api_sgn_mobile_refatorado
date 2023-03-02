@@ -1,5 +1,5 @@
+import { boletimMedicaoDetalhe } from '../../queries/serviceContractBulletin'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
-import { boletimMedicaoDetalhe } from '../../queries'
 interface IBcsi {
     BCSI_SERV_COD: string,
     SERV_DESC: string,

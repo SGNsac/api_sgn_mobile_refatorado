@@ -1,4 +1,4 @@
-import { selectPefiPejuPess } from '../../queries'
+import { selectPefiPejuPess } from '../../queries/schedule'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
 
 interface IPessPefiPeju {

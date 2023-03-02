@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
-import { selectBoletim1, selectBoletim2 } from '../../queries'
+import { selectBoletim1, selectBoletim2 } from '../../queries/serviceContractBulletin'
 
 interface IBocs {
   BOCS_COD: string,
