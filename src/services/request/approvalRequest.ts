@@ -20,7 +20,7 @@ interface IResponse{
 }
 
 export class ApprovalRequestService {
-  public async execute (TOKEN: string, USUA_SENHA_APP: string, posUsuaCod: string, pediCod: string): Promise<IResponse> {
+  public async execute (TOKEN: string, USUA_SENHA_APP: string, posUsuaCod: string, pediCod: string, pediNumero: string): Promise<IResponse> {
     const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
 
     const decodeToken = jwt.verify(TOKEN, secretAcess) as IdecodeAcessToken
@@ -42,6 +42,9 @@ export class ApprovalRequestService {
     const comparePassword = await bcrypt.compare(USUA_SENHA_APP, passwordBD)
 
     if (!comparePassword) {
+      console.log('====================================')
+      console.log(1)
+      console.log('====================================')
       return ({
         message: 'Senha incorreta',
         error: true,
@@ -84,7 +87,7 @@ export class ApprovalRequestService {
     await PedidoEstoqueRepository.query(sql)
 
     return ({
-      message: 'Pedido aprovado com sucesso',
+      message: `Pedido ${pediNumero} aprovado com sucesso`,
       error: false,
       status: 200
     })

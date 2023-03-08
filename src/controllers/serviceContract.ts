@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { ListServiceContractServices } from '../services/serviceContract/listServiceContractServices'
 import { ApprovalServiceContract } from '../services/serviceContract/approvalServiceContract'
-import { ListDetailsServiceContractServices } from '../services/serviceContract/listDetailsServiceContractServices'
+import { ListDetailsServiceContract } from '../services/serviceContract/listDetailsService'
 
 export class ServiceContract {
   public async list (request: Request, response: Response): Promise<Response> {
@@ -128,13 +128,12 @@ export class ServiceContract {
     if (!authHeader) {
       return response.status(400).json({ message: 'TOKEN IS MISSING' })
     }
-    const [, acessToken] = authHeader.split(' ')
 
     const { cod } = request.params
 
-    const listDetailsServiceContractServices = new ListDetailsServiceContractServices()
+    const listDetailsServiceContract = new ListDetailsServiceContract()
 
-    const execute = await listDetailsServiceContractServices.execute(acessToken, cod)
+    const execute = await listDetailsServiceContract.execute(cod)
 
     return response.json(execute)
   }
@@ -157,6 +156,7 @@ export class ServiceContract {
     for await (const item of arrayCocs) {
       const execute = await approvalServiceContract.execute(
         acessToken, item[0] + '', item[1] + '', password, item[2]
+        // TOKEN: string, ass: string, codCocs: string, password: string, valTotal: string
       )
       if (execute.erro === true) {
         status = 400

@@ -143,130 +143,138 @@ export const selectPedidosItemServico = (pediCod: string) => {
     `
 }
 
-export const selectPedidoEstoque1 = (usuaCod: string) => {
+export const selectPedidoEstoque1 = (usuaCod: string, queryString: string) => {
   return `
     SELECT
-        PEDI_TOTAL_MERC,
-        PEDI_OBS,
-        PEDI_DESCONTO,
-        PEDI_STATUS,
-        PEDI_FRETE,
-        PEDI_VALOR_APROVADO,
-        PEDI_VALOR_TOTAL,
-        PEDI_COD,
-        PEDI_NUMERO,
-        FORN_NOME,
-        PEDI_DATA,
-        1 AS ASS,
-        EMPR_NOME,
-        PEDI_FORN_COD, 
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
+      PEDI_TOTAL_MERC,
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      1 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO,0) 
+                * 
+              ISNULL(PESE_QUANTIDADE,0)
+              -
+              ISNULL(PESE_DESCONTO,0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PEIT_VALORUNI,0) 
+                * 
+              ISNULL(PEIT_QTD,0)
                 -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
+              ISNULL(PEIT_DESCONTO,0)
+            )
+          ,0)
+        FROM
+          PEDIDO_ITEM
+        WHERE
+          PEIT_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_ITEM
     FROM
-        pedido_estoque
+      PEDIDO_ESTOQUE
     INNER JOIN
-        FORNECEDOR
+      FORNECEDOR
     ON
-        FORN_COD = PEDI_FORN_COD
+      FORN_COD = PEDI_FORN_COD
     INNER JOIN
-        EMPRESA
+      EMPRESA
     ON
       EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD
     WHERE
       PEDI_USUA_COD_ASS_1 =   ${usuaCod}
     AND 
       PEDI_ASSINATURA_1 != 'S'
     AND
-      PEDI_STATUS != 'AP'
+      PEDI_STATUS != 'A' 
+    AND 
+      PEDI_STATUS != 'C' 
+    AND 
+      PEDI_STATUS != 'N'   
+    ${queryString}
     ORDER BY
-        PEDI_DATA DESC`
+      PEDI_DATA DESC
+  `
 }
 
-export const selectPedidoEstoque2 = (usuaCod: string) => {
+export const selectPedidoEstoque2 = (usuaCod: string, queryString: string) => {
   return `
     SELECT
-        PEDI_TOTAL_MERC,
-        PEDI_OBS,
-        PEDI_DESCONTO,
-        PEDI_STATUS,
-        PEDI_FRETE,
-        PEDI_VALOR_APROVADO,
-        PEDI_VALOR_TOTAL,
-        PEDI_COD,
-        PEDI_NUMERO,
-        FORN_NOME,
-        PEDI_DATA,
-        2 AS ASS,
-        EMPR_NOME,
-        PEDI_FORN_COD,  
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      2 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD,  
+      PEDI_TOTAL_MERC,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO,0) 
+                * 
+              ISNULL(PESE_QUANTIDADE,0)
+              -
+              ISNULL(PESE_DESCONTO,0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PEIT_VALORUNI,0) 
+                * 
+              ISNULL(PEIT_QTD,0)
                 -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
+              ISNULL(PEIT_DESCONTO,0)
+            )
+          ,0)
+        FROM
+          PEDIDO_ITEM
+        WHERE
+          PEIT_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_ITEM
     FROM
-        pedido_estoque
+        PEDIDO_ESTOQUE
     INNER JOIN
         FORNECEDOR
     ON
@@ -275,6 +283,10 @@ export const selectPedidoEstoque2 = (usuaCod: string) => {
         EMPRESA
     ON
         EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD
     WHERE
         PEDI_USUA_COD_ASS_2 =   ${usuaCod}
     AND 
@@ -282,55 +294,62 @@ export const selectPedidoEstoque2 = (usuaCod: string) => {
     AND 
       PEDI_ASSINATURA_1 = 'S'
     AND
-      PEDI_STATUS != 'AP'
+      PEDI_STATUS != 'A' 
+    AND 
+      PEDI_STATUS != 'C' 
+    AND 
+      PEDI_STATUS != 'N'
+    ${queryString}
     ORDER BY
-        PEDI_DATA DESC`
+      PEDI_DATA DESC
+  `
 }
 
-export const selectPedidoEstoque3 = (usuaCod: string) => {
+export const selectPedidoEstoque3 = (usuaCod: string, queryString: string) => {
   return `
     SELECT
-        PEDI_TOTAL_MERC,
-        PEDI_OBS,
-        PEDI_DESCONTO,
-        PEDI_STATUS,
-        PEDI_FRETE,
-        PEDI_VALOR_APROVADO,
-        PEDI_VALOR_TOTAL,
-        PEDI_COD,
-        PEDI_NUMERO,
-        FORN_NOME,
-        PEDI_DATA,
-        3 AS ASS,
-        EMPR_NOME,
-        PEDI_FORN_COD, 
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      3 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD, 
+      PEDI_TOTAL_MERC,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO,0) 
+                * 
+              ISNULL(PESE_QUANTIDADE,0)
                 -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
+              ISNULL(PESE_DESCONTO,0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PEIT_VALORUNI,0) 
+                * 
+              ISNULL(PEIT_QTD,0)
+                -
+              ISNULL(PEIT_DESCONTO,0)
+            )
+          ,0)
           FROM
             PEDIDO_ITEM
           WHERE
@@ -339,7 +358,7 @@ export const selectPedidoEstoque3 = (usuaCod: string) => {
       AS  
         VALOR_TOTAL_ITEM
     FROM
-        pedido_estoque
+        PEDIDO_ESTOQUE
     INNER JOIN
         FORNECEDOR
     ON
@@ -348,6 +367,10 @@ export const selectPedidoEstoque3 = (usuaCod: string) => {
         EMPRESA
     ON
         EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD        
     WHERE
         PEDI_USUA_COD_ASS_3 =   ${usuaCod}
     AND 
@@ -357,72 +380,80 @@ export const selectPedidoEstoque3 = (usuaCod: string) => {
     AND 
       PEDI_ASSINATURA_1 = 'S'
     AND
-      PEDI_STATUS != 'AP'
+      PEDI_STATUS != 'A' 
+    AND 
+      PEDI_STATUS != 'C' 
+    AND 
+      PEDI_STATUS != 'N'
+    ${queryString}
     ORDER BY
         PEDI_DATA DESC`
 }
 
-export const selectPedidoEstoque4 = (usuaCod: string) => {
+export const selectPedidoEstoque4 = (usuaCod: string, queryString: string) => {
   return `
     SELECT
-        PEDI_TOTAL_MERC,
-        PEDI_OBS,
-        PEDI_DESCONTO,
-        PEDI_STATUS,
-        PEDI_FRETE,
-        PEDI_VALOR_APROVADO,
-        PEDI_VALOR_TOTAL,
-        PEDI_COD,
-        PEDI_NUMERO,
-        FORN_NOME,
-        PEDI_DATA,
-        4 AS ASS,
-        EMPR_NOME,
-        PEDI_FORN_COD,  
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      4 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD,  
+      PEDI_TOTAL_MERC,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO,0) 
+                * 
+              ISNULL(PESE_QUANTIDADE,0)
                 -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
+              ISNULL(PESE_DESCONTO,0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PEIT_VALORUNI,0) 
+                * 
+              ISNULL(PEIT_QTD,0)
+                -
+              ISNULL(PEIT_DESCONTO,0)
+            )
+          ,0)
+        FROM
+          PEDIDO_ITEM
+        WHERE
+          PEIT_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_ITEM
     FROM
-        pedido_estoque
+      PEDIDO_ESTOQUE
     INNER JOIN
-        FORNECEDOR
+      FORNECEDOR
     ON
-        FORN_COD = PEDI_FORN_COD
+      FORN_COD = PEDI_FORN_COD
     INNER JOIN
-        EMPRESA
+      EMPRESA
     ON
-        EMPR_COD = PEDI_EMPR_COD
+      EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD      
     WHERE
       PEDI_USUA_COD_ASS_4 =   ${usuaCod}
     AND 
@@ -434,962 +465,15 @@ export const selectPedidoEstoque4 = (usuaCod: string) => {
     AND 
       PEDI_ASSINATURA_1 = 'S'
     AND
-      PEDI_STATUS != 'AP'
+      PEDI_STATUS != 'A' 
+    AND 
+      PEDI_STATUS != 'C' 
+    AND 
+      PEDI_STATUS != 'N'   
+    ${queryString}
     ORDER BY
         PEDI_DATA DESC
     `
-}
-
-export const searchNumero4 = (usuaCod: string, pediNumero: string) => {
-  return `
-        SELECT
-            PEDI_TOTAL_MERC,
-            PEDI_OBS,
-            PEDI_DESCONTO,
-            PEDI_STATUS,
-            PEDI_FRETE,
-            PEDI_VALOR_APROVADO,
-            PEDI_VALOR_TOTAL,
-            PEDI_COD,
-            PEDI_NUMERO,
-            FORN_NOME,
-            PEDI_DATA,
-            4 AS ASS,
-            EMPR_NOME.
-            PEDI_FORN_COD,
-            (
-                SELECT
-                    ISNULL(
-                    SUM(
-                        ISNULL(PESE_VALOR_UNITARIO,0) 
-                        * 
-                        ISNULL(PESE_QUANTIDADE,0)
-                        -
-                        ISNULL(PESE_DESCONTO,0)
-                    )
-                    ,0)
-                FROM
-                    PEDIDO_SERVICO
-                WHERE
-                    PESE_PEDI_COD = PEDI_COD
-                ) 
-                AS  
-                VALOR_TOTAL_SERVICO,
-                (
-                SELECT
-                    ISNULL(
-                    SUM(
-                        ISNULL(peit_valoruni,0) 
-                        * 
-                        ISNULL(peit_qtd,0)
-                    )
-                    ,0)
-                FROM
-                    PEDIDO_ITEM
-                WHERE
-                    PEIT_PEDI_COD = PEDI_COD
-            ) 
-        AS  
-            VALOR_TOTAL_ITEM
-        FROM
-            pedido_estoque
-        INNER JOIN
-            FORNECEDOR
-        ON
-            FORN_COD = PEDI_FORN_COD
-        INNER JOIN
-            EMPRESA
-        ON
-            EMPR_COD = PEDI_EMPR_COD
-        WHERE
-            PEDI_STATUS != 'AP'
-        AND 
-            PEDI_USUA_COD_ASS_4 =   ${usuaCod}
-        AND 
-            PEDI_ASSINATURA_4 != 'S'
-        AND 
-            PEDI_ASSINATURA_3 = 'S'
-        AND 
-            PEDI_ASSINATURA_2 = 'S'
-        AND 
-            PEDI_ASSINATURA_1= 'S'
-        AND
-            PEDI_NUMERO = '${pediNumero}'
-        ORDER BY
-            PEDI_DATA DESC
-    `
-}
-
-export const searchNumero3 = (usuaCod: string, pediNumero: string) => {
-  return `
-          SELECT
-              PEDI_TOTAL_MERC,
-              PEDI_OBS,
-              PEDI_DESCONTO,
-              PEDI_STATUS,
-              PEDI_FRETE,
-              PEDI_VALOR_APROVADO,
-              PEDI_VALOR_TOTAL,
-              PEDI_COD,
-              PEDI_NUMERO,
-              FORN_NOME,
-              PEDI_DATA,
-              3 AS ASS,
-              EMPR_NOME,
-              PEDI_FORN_COD,
-                      (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
-                -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
-          FROM
-              pedido_estoque
-          INNER JOIN
-              FORNECEDOR
-          ON
-              FORN_COD = PEDI_FORN_COD
-          INNER JOIN
-              EMPRESA
-          ON
-              EMPR_COD = PEDI_EMPR_COD             
-          WHERE
-              PEDI_STATUS != 'AP'
-          AND 
-              PEDI_USUA_COD_ASS_3 =   ${usuaCod}
-          AND 
-              PEDI_ASSINATURA_3 != 'S'
-          AND 
-            PEDI_ASSINATURA_2 = 'S'
-          AND 
-            PEDI_ASSINATURA_1= 'S'
-          AND
-              PEDI_NUMERO = '${pediNumero}'
-          ORDER BY
-              PEDI_DATA DESC
-      `
-}
-
-export const searchNumero2 = (usuaCod: string, pediNumero: string) => {
-  return `
-          SELECT
-              PEDI_TOTAL_MERC,
-              PEDI_OBS,
-              PEDI_DESCONTO,
-              PEDI_STATUS,
-              PEDI_FRETE,
-              PEDI_VALOR_APROVADO,
-              PEDI_VALOR_TOTAL,
-              PEDI_COD,
-              PEDI_NUMERO,
-              FORN_NOME,
-              PEDI_DATA,
-              2 AS ASS,
-              EMPR_NOME,
-              PEDI_FORN_COD,
-                      (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
-                -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
-          FROM
-              pedido_estoque
-          INNER JOIN
-              FORNECEDOR
-          ON
-              FORN_COD = PEDI_FORN_COD
-          INNER JOIN
-              EMPRESA
-          ON
-              EMPR_COD = PEDI_EMPR_COD             
-          WHERE
-              PEDI_STATUS != 'AP'
-          AND 
-              PEDI_USUA_COD_ASS_2 =   ${usuaCod}
-          AND 
-              PEDI_ASSINATURA_2 != 'S'
-
-          AND 
-            PEDI_ASSINATURA_1= 'S'
-          AND
-              PEDI_NUMERO = '${pediNumero}'
-          ORDER BY
-              PEDI_DATA DESC
-      `
-}
-
-export const searchNumero1 = (usuaCod: string, pediNumero: string) => {
-  return `
-            SELECT
-                PEDI_TOTAL_MERC,
-                PEDI_OBS,
-                PEDI_DESCONTO,
-                PEDI_STATUS,
-                PEDI_FRETE,
-                PEDI_VALOR_APROVADO,
-                PEDI_VALOR_TOTAL,
-                PEDI_COD,
-                PEDI_NUMERO,
-                FORN_NOME,
-                PEDI_DATA,
-                1 AS ASS,
-                EMPR_NOME,
-                PEDI_FORN_COD,
-                        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
-                -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
-            FROM
-                pedido_estoque
-            INNER JOIN
-                FORNECEDOR
-            ON
-                FORN_COD = PEDI_FORN_COD
-            INNER JOIN
-                EMPRESA
-            ON
-                EMPR_COD = PEDI_EMPR_COD              
-            WHERE
-                PEDI_STATUS != 'AP'
-            AND 
-                PEDI_USUA_COD_ASS_1 =   ${usuaCod}
-            AND 
-                PEDI_ASSINATURA_1 != 'S'
-            AND
-                PEDI_NUMERO = '${pediNumero}'
-            ORDER BY
-                PEDI_DATA DESC
-        `
-}
-
-export const searchForn1 = (usuaCod: string, fornNome: string) => {
-  return `
-              SELECT
-                  PEDI_TOTAL_MERC,
-                  PEDI_OBS,
-                  PEDI_DESCONTO,
-                  PEDI_STATUS,
-                  PEDI_FRETE,
-                  PEDI_VALOR_APROVADO,
-                  PEDI_VALOR_TOTAL,
-                  PEDI_COD,
-                  PEDI_NUMERO,
-                  FORN_NOME,
-                  PEDI_DATA,
-                  1 AS ASS,
-                  EMPR_NOME,
-                  PEDI_FORN_COD,
-                          (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
-                -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
-              FROM
-                  pedido_estoque
-              INNER JOIN
-                  FORNECEDOR
-              ON
-                  FORN_COD = PEDI_FORN_COD
-              INNER JOIN
-                  EMPRESA
-              ON
-                  EMPR_COD = PEDI_EMPR_COD                 
-              WHERE
-                  PEDI_STATUS != 'AP'
-              AND 
-                  PEDI_USUA_COD_ASS_1 =   ${usuaCod}
-              AND 
-                  PEDI_ASSINATURA_1 != 'S'
-              AND
-                  FORN_NOME LIKE '%${fornNome}%'
-              ORDER BY
-                  PEDI_DATA DESC
-          `
-}
-
-export const searchForn2 = (usuaCod: string, fornNome: string) => {
-  return `
-                SELECT
-                    PEDI_TOTAL_MERC,
-                    PEDI_OBS,
-                    PEDI_DESCONTO,
-                    PEDI_STATUS,
-                    PEDI_FRETE,
-                    PEDI_VALOR_APROVADO,
-                    PEDI_VALOR_TOTAL,
-                    PEDI_COD,
-                    PEDI_NUMERO,
-                    FORN_NOME,
-                    PEDI_DATA,
-                    2 AS ASS,
-                    EMPR_NOME,
-                    PEDI_FORN_COD,
-                            (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
-                -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
-                FROM
-                    pedido_estoque
-                INNER JOIN
-                    FORNECEDOR
-                ON
-                    FORN_COD = PEDI_FORN_COD
-                INNER JOIN
-                    EMPRESA
-                ON
-                    EMPR_COD = PEDI_EMPR_COD                                       
-                WHERE
-                    PEDI_STATUS != 'AP'
-                AND 
-                    PEDI_USUA_COD_ASS_2 =   ${usuaCod}
-                AND 
-                    PEDI_ASSINATURA_2 != 'S'
-                 AND 
-                    PEDI_ASSINATURA_1= 'S'
-                AND
-                    FORN_NOME LIKE '%${fornNome}%'
-                ORDER BY
-                    PEDI_DATA DESC
-            `
-}
-
-export const searchForn3 = (usuaCod: string, fornNome: string) => {
-  return `
-        SELECT
-            PEDI_TOTAL_MERC,
-            PEDI_OBS,
-            PEDI_DESCONTO,
-            PEDI_STATUS,
-            PEDI_FRETE,
-            PEDI_VALOR_APROVADO,
-            PEDI_VALOR_TOTAL,
-            PEDI_COD,
-            PEDI_NUMERO,
-            FORN_NOME,
-            PEDI_DATA,
-            3 AS ASS,
-            EMPR_NOME,
-            PEDI_FORN_COD,
-          (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
-                -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
-        FROM
-            pedido_estoque
-        INNER JOIN
-            FORNECEDOR
-        ON
-            FORN_COD = PEDI_FORN_COD
-        INNER JOIN
-            EMPRESA
-        ON
-            EMPR_COD = PEDI_EMPR_COD          
-        WHERE
-            PEDI_STATUS != 'AP'
-        AND 
-            PEDI_USUA_COD_ASS_3 =   ${usuaCod}
-        AND 
-            PEDI_ASSINATURA_3 != 'S'
-        AND 
-            PEDI_ASSINATURA_2 = 'S'
-        AND 
-            PEDI_ASSINATURA_1= 'S'
-        AND
-            FORN_NOME LIKE '%${fornNome}%'
-        ORDER BY
-            PEDI_DATA 
-        DESC
-        `
-}
-
-export const searchForn4 = (usuaCod: string, fornNome: string) => {
-  return `
-          SELECT
-              PEDI_TOTAL_MERC,
-              PEDI_OBS,
-              PEDI_DESCONTO,
-              PEDI_STATUS,
-              PEDI_FRETE,
-              PEDI_VALOR_APROVADO,
-              PEDI_VALOR_TOTAL,
-              PEDI_COD,
-              PEDI_NUMERO,
-              FORN_NOME,
-              PEDI_DATA,
-              4 AS ASS,
-              EMPR_NOME,
-              PEDI_FORN_COD,
-                      (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
-                -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
-          FROM
-              pedido_estoque
-          INNER JOIN
-              FORNECEDOR
-          ON
-              FORN_COD = PEDI_FORN_COD
-          INNER JOIN
-              EMPRESA
-          ON
-              EMPR_COD = PEDI_EMPR_COD            
-          WHERE
-              PEDI_STATUS != 'AP'
-          AND 
-              PEDI_USUA_COD_ASS_4 =   ${usuaCod}
-          AND 
-              PEDI_ASSINATURA_4 != 'S'
-          AND 
-            PEDI_ASSINATURA_3 = 'S'
-          AND 
-            PEDI_ASSINATURA_2 = 'S'
-          AND 
-            PEDI_ASSINATURA_1= 'S'
-          AND
-              FORN_NOME LIKE '%${fornNome}%'
-          ORDER BY
-              PEDI_DATA 
-          DESC
-          `
-}
-
-export const searchFunc1 = (usuaCod: string, funcNome: string) => {
-  return `
-        SELECT
-            PEDI_TOTAL_MERC,
-            PEDI_OBS,
-            PEDI_DESCONTO,
-            PEDI_STATUS,
-            PEDI_FRETE,
-            PEDI_VALOR_APROVADO,
-            PEDI_VALOR_TOTAL,
-            PEDI_COD,
-            PEDI_NUMERO,
-            FORN_NOME,
-            PEDI_DATA,
-            1 AS ASS,
-            EMPR_NOME,
-            PESS_NOME,
-            PEDI_FORN_COD,
-                    (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
-                -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
-        FROM
-            pedido_estoque
-        INNER JOIN
-            FORNECEDOR
-        ON
-            FORN_COD = PEDI_FORN_COD
-        INNER JOIN
-            EMPRESA
-        ON
-            EMPR_COD = PEDI_EMPR_COD
-        INNER JOIN
-            PESSOAL
-        ON
-            PESS_COD = PEDI_PESS_COD         
-        WHERE
-            PEDI_STATUS != 'AP'
-        AND 
-            PEDI_USUA_COD_ASS_1 =   ${usuaCod}
-        AND 
-            PEDI_ASSINATURA_1 != 'S'
-        AND
-            PESS_NOME LIKE '%${funcNome}%'
-        ORDER BY
-            PEDI_DATA 
-        DESC
-        `
-}
-
-export const searchFunc2 = (usuaCod: string, funcNome: string) => {
-  return `
-        SELECT
-            PEDI_TOTAL_MERC,
-            PEDI_OBS,
-            PEDI_DESCONTO,
-            PEDI_STATUS,
-            PEDI_FRETE,
-            PEDI_VALOR_APROVADO,
-            PEDI_VALOR_TOTAL,
-            PEDI_COD,
-            PEDI_NUMERO,
-            FORN_NOME,
-            PEDI_DATA,
-            2 AS ASS,
-            EMPR_NOME,
-            PESS_NOME,
-            PEDI_FORN_COD,
-                    (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
-                -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
-        FROM
-            pedido_estoque
-        INNER JOIN
-            FORNECEDOR
-        ON
-            FORN_COD = PEDI_FORN_COD
-        INNER JOIN
-            EMPRESA
-        ON
-            EMPR_COD = PEDI_EMPR_COD
-        INNER JOIN
-            PESSOAL
-        ON
-            PESS_COD = PEDI_PESS_COD    
-        WHERE
-            PEDI_STATUS != 'AP'
-        AND 
-            PEDI_USUA_COD_ASS_2 =   ${usuaCod}
-        AND 
-            PEDI_ASSINATURA_2 != 'S'
-        AND 
-            PEDI_ASSINATURA_1= 'S'
-        AND
-            PESS_NOME LIKE '%${funcNome}%'
-        ORDER BY
-            PEDI_DATA 
-        DESC
-        `
-}
-
-export const searchFunc3 = (usuaCod: string, funcNome: string) => {
-  return `
-        SELECT
-            PEDI_TOTAL_MERC,
-            PEDI_OBS,
-            PEDI_DESCONTO,
-            PEDI_STATUS,
-            PEDI_FRETE,
-            PEDI_VALOR_APROVADO,
-            PEDI_VALOR_TOTAL,
-            PEDI_COD,
-            PEDI_NUMERO,
-            FORN_NOME,
-            PEDI_DATA,
-            3 AS ASS,
-            EMPR_NOME,
-            PESS_NOME,
-            PEDI_FORN_COD,
-                    (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(PESE_VALOR_UNITARIO,0) 
-                  * 
-                ISNULL(PESE_QUANTIDADE,0)
-                -
-                ISNULL(PESE_DESCONTO,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_SERVICO
-          WHERE
-            PESE_PEDI_COD = PEDI_COD
-        ) 
-        AS  
-          VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
-        FROM
-            pedido_estoque
-        INNER JOIN
-            FORNECEDOR
-        ON
-            FORN_COD = PEDI_FORN_COD
-        INNER JOIN
-            EMPRESA
-        ON
-            EMPR_COD = PEDI_EMPR_COD
-        INNER JOIN
-            PESSOAL
-        ON
-            PESS_COD = PEDI_PESS_COD         
-        WHERE
-            PEDI_STATUS != 'AP'
-        AND 
-            PEDI_USUA_COD_ASS_3 =   ${usuaCod}
-        AND 
-            PEDI_ASSINATURA_3 != 'S'
-        AND 
-            PEDI_ASSINATURA_2 = 'S'
-        AND 
-            PEDI_ASSINATURA_1= 'S'
-        AND
-            PESS_NOME LIKE '%${funcNome}%'
-        ORDER BY
-            PEDI_DATA 
-        DESC
-        `
-}
-
-export const searchFunc4 = (usuaCod: string, funcNome: string) => {
-  return `
-        SELECT
-            PEDI_TOTAL_MERC,
-            PEDI_OBS,
-            PEDI_DESCONTO,
-            PEDI_STATUS,
-            PEDI_FRETE,
-            PEDI_VALOR_APROVADO,
-            PEDI_VALOR_TOTAL,
-            PEDI_COD,
-            PEDI_NUMERO,
-            FORN_NOME,
-            PEDI_DATA,
-            4 AS ASS,
-            EMPR_NOME,
-            PESS_NOME,
-            PEDI_FORN_COD,
-            (
-                SELECT
-                    ISNULL(
-                    SUM
-                        (
-                        ISNULL(PESE_VALOR_UNITARIO,0) 
-                        * 
-                        ISNULL(PESE_QUANTIDADE,0)
-                        -
-                        ISNULL(PESE_DESCONTO,0)
-                        )
-                    ,0)
-                FROM
-                    PEDIDO_SERVICO
-                WHERE
-                    PESE_PEDI_COD = PEDI_COD
-            ) 
-        AS  
-            VALOR_TOTAL_SERVICO,
-        (
-          SELECT
-            ISNULL(
-              SUM(
-                ISNULL(peit_valoruni,0) 
-                  * 
-                ISNULL(peit_qtd,0)
-              )
-            ,0)
-          FROM
-            PEDIDO_ITEM
-          WHERE
-            PEIT_PEDI_COD = PEDI_COD
-        ) 
-      AS  
-        VALOR_TOTAL_ITEM
-        FROM
-            pedido_estoque
-        INNER JOIN
-            FORNECEDOR
-        ON
-            FORN_COD = PEDI_FORN_COD
-        INNER JOIN
-            EMPRESA
-        ON
-            EMPR_COD = PEDI_EMPR_COD
-        INNER JOIN
-            PESSOAL
-        ON
-            PESS_COD = PEDI_PESS_COD           
-        WHERE
-            PEDI_STATUS != 'AP'
-        AND 
-            PEDI_USUA_COD_ASS_4 =   ${usuaCod}
-        AND 
-            PEDI_ASSINATURA_4 != 'S'
-        AND 
-            PEDI_ASSINATURA_3 = 'S'
-        AND 
-            PEDI_ASSINATURA_2 = 'S'
-        AND 
-            PEDI_ASSINATURA_1= 'S'
-        AND
-            PESS_NOME LIKE '%${funcNome}%'
-        ORDER BY
-            PEDI_DATA 
-        DESC
-        `
 }
 
 export const totalFornCerePedido = (cereCod: string, fornCod: string, queryString: string) => {
@@ -1399,51 +483,53 @@ export const totalFornCerePedido = (cereCod: string, fornCod: string, queryStrin
       AUX.CR,
       SUM(AUX.VALOR) AS VALOR
     FROM 
-    (
-      SELECT 
-        PEDI_FORN_COD AS FORNECEDOR,
-        PEIT_CERE_COD AS CR,
-        (
-          ISNULL(PEIT_VALORUNI,0)
-            * 
-          ISNULL(PEIT_QTD,0)
-        ) 
-          - 
-        ISNULL(PEIT_DESCONTO,0) AS VALOR
-      FROM 
-        PEDIDO_ITEM
-      INNER JOIN 
-        PEDIDO_ESTOQUE 
-      ON 
-        PEDI_COD = PEIT_PEDI_COD
-      WHERE
-        PEDI_FORN_COD = ${fornCod}
-      AND
-        PEIT_CERE_COD = ${cereCod}
-        ${queryString}  
-      UNION
-      SELECT 
-        PEDI_FORN_COD,
-        PESE_CERE_COD,
-        (
-          ISNULL(PESE_VALOR_UNITARIO,0) 
-            * 
-          ISNULL(PESE_QUANTIDADE,0)
-        ) 
-          - 
-        ISNULL(PESE_DESCONTO,0) AS VALOR
-      FROM 
-        PEDIDO_SERVICO
-      INNER JOIN 
-        PEDIDO_ESTOQUE 
-      ON 
-        PEDI_COD = PESE_PEDI_COD
-      WHERE
-        PEDI_FORN_COD = ${fornCod}
-      AND
-        PESE_CERE_COD = ${cereCod}
-        ${queryString}
-    ) AUX
+      (
+        SELECT 
+          PEDI_FORN_COD AS FORNECEDOR,
+          PEIT_CERE_COD AS CR,
+          (
+            ISNULL(PEIT_VALORUNI,0)
+              * 
+            ISNULL(PEIT_QTD,0)
+              - 
+            ISNULL(PEIT_DESCONTO,0) AS VALOR
+          ) 
+        FROM 
+          PEDIDO_ITEM
+        INNER JOIN 
+          PEDIDO_ESTOQUE 
+        ON 
+          PEDI_COD = PEIT_PEDI_COD
+        WHERE
+          PEDI_FORN_COD = ${fornCod}
+        AND
+          PEIT_CERE_COD = ${cereCod}
+          ${queryString}  
+        
+        UNION
+        
+        SELECT 
+          PEDI_FORN_COD,
+          PESE_CERE_COD,
+          (
+            ISNULL(PESE_VALOR_UNITARIO,0) 
+              * 
+            ISNULL(PESE_QUANTIDADE,0)
+              - 
+            ISNULL(PESE_DESCONTO,0) AS VALOR
+          ) 
+        FROM 
+          PEDIDO_SERVICO
+        INNER JOIN 
+          PEDIDO_ESTOQUE 
+        ON 
+          PEDI_COD = PESE_PEDI_COD
+        WHERE
+          PEDI_FORN_COD = ${fornCod}
+        AND
+          PESE_CERE_COD = ${cereCod}
+          ${queryString}
+      ) AUX
     GROUP BY
       AUX.FORNECEDOR,AUX.CR
     ORDER BY
@@ -1462,6 +548,8 @@ export const totalUsuaPedido = (usuaCod: string, queryString: string) => {
               ISNULL(PEIT_VALORUNI,0)
                 *
               ISNULL(PEIT_QTD,0)
+                -
+              ISNULL(PEIT_DESCONTO,0)
             )
           ,0)
         FROM
@@ -1519,5 +607,686 @@ export const selectCerePeitPedi = (cod: string) => {
       PEDIDO_SERVICO
     WHERE
       PESE_PEDI_COD = ${cod}
+  `
+}
+
+export const selectPedidoEstoqueCere1 = (usuaCod: string, queryString: string, queryStringPese: string, queryStringPeit: string) => {
+  return `
+    SELECT
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      1 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD,
+      PEDI_TOTAL_MERC,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO, 0)
+              *
+              ISNULL(PESE_QUANTIDADE, 0)
+              -
+              ISNULL(PESE_DESCONTO, 0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+      SELECT
+        ISNULL(
+          SUM(
+            ISNULL(PEIT_VALORUNI, 0)
+            *
+            ISNULL(PEIT_QTD, 0)
+            -
+            ISNULL(PEIT_DESCONTO, 0)
+          )
+        ,0)
+      FROM
+        PEDIDO_ITEM
+      WHERE
+        PEIT_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_ITEM
+    FROM
+      PEDIDO_ESTOQUE
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = PEDI_FORN_COD
+    INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD
+    INNER JOIN
+      PEDIDO_SERVICO
+    ON
+      PESE_PEDI_COD = PEDI_COD
+    WHERE
+      PEDI_USUA_COD_ASS_1 = ${usuaCod}
+    AND
+      PEDI_ASSINATURA_1 != 'S'
+    AND
+      PEDI_STATUS != 'A'
+    AND
+      PEDI_STATUS != 'C'
+    AND
+      PEDI_STATUS != 'N'
+      ${queryStringPese}
+      ${queryString}
+
+    UNION
+
+    SELECT
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      1 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD,
+      PEDI_TOTAL_MERC,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO, 0)
+              *
+              ISNULL(PESE_QUANTIDADE, 0)
+              -
+              ISNULL(PESE_DESCONTO, 0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+      SELECT
+        ISNULL(
+          SUM(
+            ISNULL(PEIT_VALORUNI, 0)
+            *
+            ISNULL(PEIT_QTD, 0)
+            -
+            ISNULL(PEIT_DESCONTO, 0)
+          )
+        ,0)
+      FROM
+        PEDIDO_ITEM
+      WHERE
+        PEIT_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_ITEM
+    FROM
+      PEDIDO_ESTOQUE
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = PEDI_FORN_COD
+    INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD
+    INNER JOIN
+      PEDIDO_ITEM
+    ON
+      PEIT_PEDI_COD = PEDI_COD
+    WHERE
+      PEDI_USUA_COD_ASS_1 = ${usuaCod}
+    AND
+      PEDI_ASSINATURA_1 != 'S'
+    AND
+      PEDI_STATUS != 'A'
+    AND
+      PEDI_STATUS != 'C'
+    AND
+      PEDI_STATUS != 'N'
+      ${queryStringPeit}
+      ${queryString}
+  `
+}
+
+export const selectPedidoEstoqueCere2 = (usuaCod: string, queryString: string, queryStringPese: string, queryStringPeit: string) => {
+  return `
+    SELECT
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      1 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD,
+      PEDI_TOTAL_MERC,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO, 0)
+              *
+              ISNULL(PESE_QUANTIDADE, 0)
+              -
+              ISNULL(PESE_DESCONTO, 0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+      SELECT
+        ISNULL(
+          SUM(
+            ISNULL(PEIT_VALORUNI, 0)
+            *
+            ISNULL(PEIT_QTD, 0)
+            -
+            ISNULL(PEIT_DESCONTO, 0)
+          )
+        ,0)
+      FROM
+        PEDIDO_ITEM
+      WHERE
+        PEIT_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_ITEM
+    FROM
+      PEDIDO_ESTOQUE
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = PEDI_FORN_COD
+    INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD
+    INNER JOIN
+      PEDIDO_SERVICO
+    ON
+      PESE_PEDI_COD = PEDI_COD
+    WHERE
+      PEDI_USUA_COD_ASS_2 = ${usuaCod}
+    AND
+      PEDI_ASSINATURA_2 != 'S'
+    AND
+      PEDI_ASSINATURA_1 = 'S'
+    AND
+      PEDI_STATUS != 'A'
+    AND
+      PEDI_STATUS != 'C'
+    AND
+      PEDI_STATUS != 'N'
+      ${queryStringPese}
+      ${queryString}
+
+
+    UNION
+
+    SELECT
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      1 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD,
+      PEDI_TOTAL_MERC,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO, 0)
+              *
+              ISNULL(PESE_QUANTIDADE, 0)
+              -
+              ISNULL(PESE_DESCONTO, 0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+      SELECT
+        ISNULL(
+          SUM(
+            ISNULL(PEIT_VALORUNI, 0)
+            *
+            ISNULL(PEIT_QTD, 0)
+            -
+            ISNULL(PEIT_DESCONTO, 0)
+          )
+        ,0)
+      FROM
+        PEDIDO_ITEM
+      WHERE
+        PEIT_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_ITEM
+    FROM
+      PEDIDO_ESTOQUE
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = PEDI_FORN_COD
+    INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD
+    INNER JOIN
+      PEDIDO_ITEM
+    ON
+      PEIT_PEDI_COD = PEDI_COD    
+    WHERE
+      PEDI_USUA_COD_ASS_2 = ${usuaCod}
+    AND
+      PEDI_ASSINATURA_2 != 'S'
+    AND
+      PEDI_ASSINATURA_1 = 'S'
+    AND
+      PEDI_STATUS != 'A'
+    AND
+      PEDI_STATUS != 'C'
+    AND
+      PEDI_STATUS != 'N'
+      ${queryStringPeit}
+      ${queryString}
+  `
+}
+
+export const selectPedidoEstoqueCere3 = (usuaCod: string, queryString: string, queryStringPese: string, queryStringPeit: string) => {
+  return `
+    SELECT
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      1 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD,
+      PEDI_TOTAL_MERC,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO, 0)
+              *
+              ISNULL(PESE_QUANTIDADE, 0)
+              -
+              ISNULL(PESE_DESCONTO, 0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+      SELECT
+        ISNULL(
+          SUM(
+            ISNULL(PEIT_VALORUNI, 0)
+            *
+            ISNULL(PEIT_QTD, 0)
+            -
+            ISNULL(PEIT_DESCONTO, 0)
+          )
+        ,0)
+      FROM
+        PEDIDO_ITEM
+      WHERE
+        PEIT_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_ITEM
+    FROM
+      PEDIDO_ESTOQUE
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = PEDI_FORN_COD
+    INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD
+    INNER JOIN
+      PEDIDO_SERVICO
+    ON
+      PESE_PEDI_COD = PEDI_COD
+    WHERE
+      PEDI_USUA_COD_ASS_3 = ${usuaCod}
+    AND
+      PEDI_ASSINATURA_3 != 'S'    
+    AND    
+      PEDI_ASSINATURA_2 = 'S'
+    AND
+      PEDI_ASSINATURA_1 = 'S'
+    AND
+      PEDI_STATUS != 'A'
+    AND
+      PEDI_STATUS != 'C'
+    AND
+      PEDI_STATUS != 'N'
+    ${queryStringPese}
+    ${queryString}
+
+    UNION
+
+    SELECT
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      1 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD,
+      PEDI_TOTAL_MERC,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO, 0)
+              *
+              ISNULL(PESE_QUANTIDADE, 0)
+              -
+              ISNULL(PESE_DESCONTO, 0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+      SELECT
+        ISNULL(
+          SUM(
+            ISNULL(PEIT_VALORUNI, 0)
+            *
+            ISNULL(PEIT_QTD, 0)
+            -
+            ISNULL(PEIT_DESCONTO, 0)
+          )
+        ,0)
+      FROM
+        PEDIDO_ITEM
+      WHERE
+        PEIT_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_ITEM
+    FROM
+      PEDIDO_ESTOQUE
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = PEDI_FORN_COD
+    INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD
+    INNER JOIN
+      PEDIDO_ITEM
+    ON
+      PEIT_PEDI_COD = PEDI_COD
+    WHERE
+      PEDI_USUA_COD_ASS_3 = ${usuaCod}
+    AND
+      PEDI_ASSINATURA_3 != 'S'      
+    AND
+      PEDI_ASSINATURA_2 = 'S'
+    AND
+      PEDI_ASSINATURA_1 = 'S'
+    AND
+      PEDI_STATUS != 'A'
+    AND
+      PEDI_STATUS != 'C'
+    AND
+      PEDI_STATUS != 'N'
+      ${queryStringPeit}
+      ${queryString}
+  `
+}
+
+export const selectPedidoEstoqueCere4 = (usuaCod: string, queryString: string, queryStringPese: string, queryStringPeit: string) => {
+  return `
+    SELECT
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      1 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD,
+      PEDI_TOTAL_MERC,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO, 0)
+              *
+              ISNULL(PESE_QUANTIDADE, 0)
+              -
+              ISNULL(PESE_DESCONTO, 0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+      SELECT
+        ISNULL(
+          SUM(
+            ISNULL(PEIT_VALORUNI, 0)
+            *
+            ISNULL(PEIT_QTD, 0)
+            -
+            ISNULL(PEIT_DESCONTO, 0)
+          )
+        ,0)
+      FROM
+        PEDIDO_ITEM
+      WHERE
+        PEIT_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_ITEM
+    FROM
+      PEDIDO_ESTOQUE
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = PEDI_FORN_COD
+    INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD
+    INNER JOIN
+      PEDIDO_SERVICO
+    ON
+      PESE_PEDI_COD = PEDI_COD
+    WHERE
+      PEDI_USUA_COD_ASS_4 = ${usuaCod}
+    AND
+      PEDI_ASSINATURA_4 != 'S'    
+    AND
+      PEDI_ASSINATURA_3 = 'S'    
+    AND    
+      PEDI_ASSINATURA_2 = 'S'
+    AND
+      PEDI_ASSINATURA_1 = 'S'
+    AND
+      PEDI_STATUS != 'A'
+    AND
+      PEDI_STATUS != 'C'
+    AND
+      PEDI_STATUS != 'N'
+      ${queryStringPese}
+      ${queryString}
+
+    UNION
+
+    SELECT
+      PEDI_OBS,
+      PEDI_DESCONTO,
+      PEDI_STATUS,
+      PEDI_FRETE,
+      PEDI_VALOR_APROVADO,
+      PEDI_VALOR_TOTAL,
+      PEDI_COD,
+      PEDI_NUMERO,
+      FORN_NOME,
+      PEDI_DATA,
+      1 AS ASS,
+      EMPR_NOME,
+      PEDI_FORN_COD,
+      PEDI_TOTAL_MERC,
+      PESS_NOME,
+      (
+        SELECT
+          ISNULL(
+            SUM(
+              ISNULL(PESE_VALOR_UNITARIO, 0)
+              *
+              ISNULL(PESE_QUANTIDADE, 0)
+              -
+              ISNULL(PESE_DESCONTO, 0)
+            )
+          ,0)
+        FROM
+          PEDIDO_SERVICO
+        WHERE
+          PESE_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_SERVICO,
+      (
+      SELECT
+        ISNULL(
+          SUM(
+            ISNULL(PEIT_VALORUNI, 0)
+            *
+            ISNULL(PEIT_QTD, 0)
+            -
+            ISNULL(PEIT_DESCONTO, 0)
+          )
+        ,0)
+      FROM
+        PEDIDO_ITEM
+      WHERE
+        PEIT_PEDI_COD = PEDI_COD
+      ) AS VALOR_TOTAL_ITEM
+    FROM
+      PEDIDO_ESTOQUE
+    INNER JOIN
+      FORNECEDOR
+    ON
+      FORN_COD = PEDI_FORN_COD
+    INNER JOIN
+      EMPRESA
+    ON
+      EMPR_COD = PEDI_EMPR_COD
+    INNER JOIN
+      PESSOAL
+    ON
+      PESS_COD = PEDI_PESS_COD
+    INNER JOIN
+      PEDIDO_ITEM
+    ON
+      PEIT_PEDI_COD = PEDI_COD
+    WHERE
+      PEDI_USUA_COD_ASS_4 = ${usuaCod}
+    AND
+      PEDI_ASSINATURA_4 != 'S'    
+    AND
+      PEDI_ASSINATURA_3 = 'S'      
+    AND
+      PEDI_ASSINATURA_2 = 'S'
+    AND
+      PEDI_ASSINATURA_1 = 'S'
+    AND
+      PEDI_STATUS != 'A'
+    AND
+      PEDI_STATUS != 'C'
+    AND
+      PEDI_STATUS != 'N'
+      ${queryStringPeit}
+      ${queryString}
   `
 }

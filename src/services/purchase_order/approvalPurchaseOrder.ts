@@ -72,7 +72,7 @@ export class ApprovalPurchaseOrderService {
     const sqlAprovaNumPage = await PedidoEstoqueRepository.query(`
     SELECT 
       page_num_aprovacoes_solic,
-      page_todas_aprovacoes_solic,
+      page_todas_aprovacoes_solic
     FROM 
       PARAMETROS_GERAIS
     `)

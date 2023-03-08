@@ -5,6 +5,7 @@ import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueR
 import { totalFornCerePedido, totalUsuaPedido } from '../../queries/request'
 import { selectUsuaCrParametros } from '../../queries/userResultCenter'
 import { pegaPeriodo } from '../../utils/pegaPeriodoPedido'
+import { selectPag2ContrUsuaSmpCrPedCom } from '../../queries/parametrosGerais'
 dotenv.config()
 
 interface IdecodeAcessToken {
@@ -21,6 +22,7 @@ export const validCereFornPedi = async (TOKEN: string, cereCod: string, valTotal
   const cod = parseInt(decodeToken.codUser)
 
   const existsUser = await UsuarioRepository.findOneBy({ USUA_COD: cod })
+  const periodo = pegaPeriodo('PEDI_DATA')
 
   if (!existsUser) {
     return ({
@@ -31,56 +33,100 @@ export const validCereFornPedi = async (TOKEN: string, cereCod: string, valTotal
   }
 
   const sqlUsuarioCr = selectUsuaCrParametros(cod + '', cereCod)
+  const selectPag2ContrUsuaSmpCrPedComQuery = selectPag2ContrUsuaSmpCrPedCom()
+
+  const selectPag2ContrUsuaSmpCrPedComData = await PedidoEstoqueRepository.query(selectPag2ContrUsuaSmpCrPedComQuery)
 
   const sqlUsuarioCrData = await PedidoEstoqueRepository.query(sqlUsuarioCr)
-
+  console.log(sqlUsuarioCrData)
   const USCR_VLR_MAX_APROV_PED = sqlUsuarioCrData[0].USCR_VLR_MAX_APROV_PED
   const USCR_VLR_MAX_APROV_PED_FORN = sqlUsuarioCrData[0].USCR_VLR_MAX_APROV_PED_FORN
-
-  if (USCR_VLR_MAX_APROV_PED > 0) {
-    if (USCR_VLR_MAX_APROV_PED < parseInt(valTotal)) {
-      return ({
-        message: `Pedido ${pediCod} reprovado valor do pedido acima do valor que o usuario pode aprovar nesse CR`,
-        error: true,
-        status: 400
-      })
-    }
-  } else {
-    if (existsUser.USUA_VALOR_APROVACAO > 0) {
-      if (parseInt(valTotal) > existsUser.USUA_VALOR_APROVACAO) {
+  if (selectPag2ContrUsuaSmpCrPedComData[0].PAG2_CONTR_USUA_SMP_CR_PED_COM === 'S') {
+    if (USCR_VLR_MAX_APROV_PED > 0) {
+      if (USCR_VLR_MAX_APROV_PED < parseInt(valTotal)) {
+        console.log('====================================')
+        console.log(1)
+        console.log('====================================')
         return ({
-          message: `Pedido ${pediCod} reprovado valor do pedido acima do valor que o usuario pode aprovar`,
+          message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar nesse CR`,
           error: true,
           status: 400
         })
       }
+    } else {
+      if (existsUser.USUA_VALOR_APROVACAO > 0) {
+        if (parseInt(valTotal) > existsUser.USUA_VALOR_APROVACAO) {
+          console.log('====================================')
+          console.log(2)
+          console.log('====================================')
+          return ({
+            message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar`,
+            error: true,
+            status: 400
+          })
+        }
+      }
     }
-  }
-  const periodo = pegaPeriodo('PEDI_DATA')
 
-  const sqlTotalFornCerePedido = totalFornCerePedido(cereCod, fornCod, periodo)
+    const sqlTotalFornCerePedido = totalFornCerePedido(cereCod, fornCod, periodo)
 
-  if (USCR_VLR_MAX_APROV_PED_FORN > 0) {
-    console.log(sqlTotalFornCerePedido)
+    if (USCR_VLR_MAX_APROV_PED_FORN > 0) {
+      console.log(sqlTotalFornCerePedido)
 
-    const totalFornCerePedidoData = await PedidoEstoqueRepository.query(sqlTotalFornCerePedido)
+      const totalFornCerePedidoData = await PedidoEstoqueRepository.query(sqlTotalFornCerePedido)
 
-    let totalFornCerePedidoValue = 0
-    for (let i = 0; i < totalFornCerePedidoData; i++) {
-      totalFornCerePedidoValue += totalFornCerePedidoData[i].VALOR
+      let totalFornCerePedidoValue = 0
+      for (let i = 0; i < totalFornCerePedidoData; i++) {
+        totalFornCerePedidoValue += totalFornCerePedidoData[i].VALOR
+      }
+
+      totalFornCerePedidoValue += parseInt(valTotal)
+
+      if (USCR_VLR_MAX_APROV_PED_FORN < totalFornCerePedidoValue) {
+        console.log('====================================')
+        console.log(3)
+        console.log('====================================')
+        return ({
+          message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor mensal de aprovação para esse fornecedor`,
+          error: true,
+          status: 400
+        })
+      }
+    } else {
+      if (existsUser.USUA_VALOR_APROVACAO_MENSAL > 0) {
+        const sqlTotalUsuaPedido = totalUsuaPedido(cod + '', periodo)
+
+        const totalUsuaPedidoData = await PedidoEstoqueRepository.query(sqlTotalUsuaPedido)
+        let totalUsuaPedidoValue = 0
+        for (let i = 0; i < totalUsuaPedidoData; i++) {
+          totalUsuaPedidoValue += totalUsuaPedidoData[i].VALOR
+        }
+        totalUsuaPedidoValue += parseInt(valTotal)
+
+        if (existsUser.USUA_VALOR_APROVACAO_MENSAL < totalUsuaPedidoValue) {
+          console.log('====================================')
+          console.log(4)
+          console.log('====================================')
+          return ({
+            message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar por mês`,
+            error: true,
+            status: 400
+          })
+        }
+      }
     }
-
-    totalFornCerePedidoValue += parseInt(valTotal)
-
-    if (USCR_VLR_MAX_APROV_PED_FORN < totalFornCerePedidoValue) {
+  } else {
+    if (USCR_VLR_MAX_APROV_PED < parseInt(valTotal)) {
+      console.log('====================================')
+      console.log(5)
+      console.log('====================================')
       return ({
-        message: `Pedido ${pediCod} reprovado valor do pedido acima do valor mensal de aprovação para esse fornecedor`,
+        message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar nesse CR`,
         error: true,
         status: 400
       })
     }
-  } else {
-    if (existsUser.USUA_VALOR_APROVACAO_MENSAL > 0) {
+    if (existsUser.USUA_VALOR_APROVACAO_MENSAL > 0 || !existsUser.USUA_VALOR_APROVACAO_MENSAL) {
       const sqlTotalUsuaPedido = totalUsuaPedido(cod + '', periodo)
 
       const totalUsuaPedidoData = await PedidoEstoqueRepository.query(sqlTotalUsuaPedido)
@@ -91,14 +137,20 @@ export const validCereFornPedi = async (TOKEN: string, cereCod: string, valTotal
       totalUsuaPedidoValue += parseInt(valTotal)
 
       if (existsUser.USUA_VALOR_APROVACAO_MENSAL < totalUsuaPedidoValue) {
+        console.log('====================================')
+        console.log(6)
+        console.log('====================================')
         return ({
-          message: `Pedido ${pediCod} reprovado valor do pedido acima do valor que o usuario pode aprovar por mês`,
+          message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar por mês`,
           error: true,
           status: 400
         })
       }
     }
   }
+  console.log('====================================')
+  console.log(7)
+  console.log('====================================')
   return ({
     message: '',
     error: false,

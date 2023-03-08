@@ -37,6 +37,15 @@ export class LoginService {
 
     const Tokenuuid = process.env.TOKEN_SECRET_REFRESH + ''
 
+    if (!existsUser.USUA_SENHA_APP || existsUser.USUA_SENHA_APP === '') {
+      return ({
+        message: 'Úsuario sem senha cadastrada',
+        error: true,
+        status: 400,
+        refreshToken: ''
+      })
+    }
+
     const passwordBD = existsUser.USUA_SENHA_APP
 
     const sigla = existsUser.USUA_SIGLA

@@ -60,6 +60,8 @@ export const selectServiceContract1 = (usuaCod: string, queryString: string) => 
     ON 
       LOCA_COD = COCS_LOCA_COD
     WHERE
+      COCS_STATUS = 'CA'
+    AND
       COCS_USUA_COD_ASS_1 = ${usuaCod}
     AND 
       COCS_ASSINATURA_1 != 'S'
@@ -130,6 +132,8 @@ export const selectServiceContract2 = (usuaCod: string, queryString: string) => 
     ON 
       LOCA_COD = COCS_LOCA_COD
     WHERE
+      COCS_STATUS = 'CA'
+    AND    
       COCS_USUA_COD_ASS_2 = ${usuaCod}
     AND 
       COCS_ASSINATURA_2 != 'S'
@@ -202,6 +206,8 @@ export const selectServiceContract3 = (usuaCod: string, queryString: string) => 
     ON 
       LOCA_COD = COCS_LOCA_COD
     WHERE
+      COCS_STATUS = 'CA'
+    AND
       COCS_USUA_COD_ASS_3 = ${usuaCod}
     AND 
       COCS_ASSINATURA_3 != 'S'
@@ -275,6 +281,8 @@ export const selectServiceContract4 = (usuaCod: string, queryString: string) => 
     ON 
       LOCA_COD = COCS_LOCA_COD
     WHERE
+      COCS_STATUS = 'CA'
+    AND
       COCS_USUA_COD_ASS_4 = ${usuaCod}
     AND 
       COCS_ASSINATURA_4 != 'S'
@@ -355,5 +363,70 @@ export const attContratoCompraServico = (cod: string, ass: string, statusQuery: 
       COCS_DATA_APROVACAO${ass} = GETDATE()
     WHERE
       COCS_COD = ${cod}
+  `
+}
+
+export const selectDetailsServiceContract = (cod: string) => {
+  return `
+    SELECT 
+      ICCS_ITPC_COD_FINANC,
+      ICCS_VLR_UNIT_ATUAL,
+      ICCS_DESCONTO,
+      ICCS_DATA_CONCLUSAO,
+      ICCS_OBS,
+      ICCS_UNMA_COD,
+      ICCS_VLR_UNIT,
+      ICCS_QUANTIDADE,
+      ICCS_PROJ_COD,
+      ICCS_ETPR_COD,
+      ICCS_DECO_COD,
+      ICCS_SEFE_COD,
+      SERV_DESC,
+      UNMA_DESC,
+      UNMA_SIGLA,
+      (
+        SELECT
+          PROJ_DESC
+        FROM 
+          PROJETO
+        WHERE
+          PROJ_COD = ICCS_PROJ_COD
+      ) AS PROJETO,
+      (
+        SELECT
+          ETPR_DESC
+        FROM
+          ETAPA_PROJETO
+        WHERE
+          ETPR_COD  = ICCS_ETPR_COD
+      ) AS ETAPA_PROJETO,
+      (
+        SELECT
+          DECO_DESC
+        FROM
+          DESCONTO
+        WHERE
+          DECO_COD  = ICCS_DECO_COD
+      ) AS DESCONTO,
+      (
+        SELECT
+          SEFE_DESC
+        FROM
+          SERVICOS_FINS_ESPECIFICOS
+        WHERE
+          SEFE_COD = ICCS_SEFE_COD
+      ) AS SERVICOS_FINS_ESPECIFICOS
+    FROM
+      ITEM_CONTRATO_COMPRA_SERVICO
+    INNER JOIN
+      SERVICOS
+    ON
+      SERV_COD  = ICCS_SERV_COD
+    INNER JOIN 
+      UNID_MAT
+    ON 
+      UNMA_COD  = ICCS_UNMA_COD
+    WHERE
+      ICCS_COCS_COD = ${cod}
   `
 }

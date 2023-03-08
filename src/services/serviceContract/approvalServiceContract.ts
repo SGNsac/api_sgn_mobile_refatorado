@@ -56,7 +56,7 @@ export class ApprovalServiceContract {
 
     if (existsUser.USUA_VALOR_APROVA_CONT_SERV < parseFloat(valTotal)) {
       return ({
-        message: `${codCocs} Úsuario não pode aprovar um contrato com valor tão alto`,
+        message: `Contrato ${codCocs} não pode ser aprovado valor acima do de aprovação do úsuario`,
         erro: true,
         status: 401
       })

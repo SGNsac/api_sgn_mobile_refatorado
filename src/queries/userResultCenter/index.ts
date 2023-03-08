@@ -11,3 +11,13 @@ export const selectUsuaCrParametros = (cod:string, cereCod:string) => {
         USCR_CERE_COD = ${cereCod}
   `
 }
+
+export const selectUsuaCr = (cod:string) => {
+  return `
+    SELECT
+        USCR_CERE_COD
+    FROM
+        USUARIO_CR
+    WHERE
+        USCR_USUA_COD = ${cod}`
+}

@@ -73,7 +73,9 @@ export const selectSoliComp1 = (usuaCod: number) => {
     AND 
       SOCO_ASSINATURA_1 != 'S'
     AND
-      SOCO_STATUS != 'AP'
+      SOCO_STATUS = ''
+    OR  
+      SOCO_STATUS = NULL
     AND 
       SOCO_USUA_COD_ASS_1 = ${usuaCod}
   `
@@ -151,10 +153,12 @@ export const selectSoliComp2 = (usuaCod: number) => {
       ESTO_ALMO_COD = SOCO_ALMO_COD
     AND
       ESTO_MATE_COD = SOCO_MATE_COD
-    AND 
+    AND   
       SOCO_ASSINATURA_2 != 'S'
     AND
-      SOCO_STATUS != 'AP'
+      SOCO_STATUS = ''
+    OR  
+      SOCO_STATUS = NULL
     AND 
       SOCO_ASSINATURA_1 = 'S'
     AND 
@@ -240,8 +244,10 @@ export const selectSoliCompNumero = (usuaCod: number, socoNUMERO: string, pos: s
       SOCO_USUA_COD_ASS_${pos} = ${usuaCod}
     AND 
       SOCO_NUMERO = '${socoNUMERO}'
-    AND 
-      SOCO_STATUS != 'AP'
+    AND
+      SOCO_STATUS = ''
+    OR  
+      SOCO_STATUS = NULL
   `
 }
 
@@ -323,8 +329,10 @@ export const selectSoliCompAlmoxarifado = (usuaCod: number, almoDesc: string, po
       SOCO_USUA_COD_ASS_${pos} = ${usuaCod}
     AND 
       ALMO_DESC LIKE '%${almoDesc}%'
-    AND 
-      SOCO_STATUS != 'AP'
+    AND
+      SOCO_STATUS = ''
+    OR  
+      SOCO_STATUS = NULL
   `
 }
 
@@ -406,8 +414,10 @@ export const selectSoliCompCR = (usuaCod: number, cereNome: string, pos: string)
       SOCO_USUA_COD_ASS_${pos} = ${usuaCod}
     AND 
       CERE_NOME LIKE '%${cereNome}%'
-    AND 
-      SOCO_STATUS != 'AP'
+    AND
+      SOCO_STATUS = ''
+    OR  
+      SOCO_STATUS = NULL
   `
 }
 
@@ -487,8 +497,10 @@ export const selectSoliCompSetorCompras = (usuaCod: number, SECO_DESC: string, p
       SOCO_ASSINATURA_${pos} != 'S'
     AND 
       SOCO_USUA_COD_ASS_${pos} = ${usuaCod}
-    AND 
-      SOCO_STATUS != 'AP'
+    AND
+      SOCO_STATUS = ''
+    OR  
+      SOCO_STATUS = NULL
     AND 
       SECO_DESC LIKE '%${SECO_DESC}%'
   `
@@ -570,8 +582,10 @@ export const selectSoliCompData = (usuaCod: number, SOCO_DTSOLI: string, pos: st
       SOCO_ASSINATURA_${pos} != 'S'
     AND 
       SOCO_USUA_COD_ASS_${pos} = ${usuaCod}
-    AND 
-      SOCO_STATUS != 'AP'
+    AND
+      SOCO_STATUS = ''
+    OR  
+      SOCO_STATUS = NULL
     AND 
       SOCO_DTSOLI = '${SOCO_DTSOLI}'
   `

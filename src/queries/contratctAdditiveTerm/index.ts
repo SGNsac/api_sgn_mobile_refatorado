@@ -33,6 +33,8 @@ export const selectPrazoContratoServico1 = (cod: string, queryString: string) =>
     ON
       COCS_FORN_COD =  FORN_COD
     WHERE
+      PRCS_APROVADO != 'S'
+    AND    
       PRCS_USUA_COD_ASS_1 = ${cod}
     AND
       PRCS_ASSINATURA_1 != 'S'
@@ -63,6 +65,8 @@ export const selectPrazoContratoServico2 = (cod: string, queryString: string) =>
     ON
       COCS_FORN_COD =  FORN_COD
     WHERE
+      PRCS_APROVADO != 'S'
+    AND    
       PRCS_USUA_COD_ASS_2 = ${cod}
     AND
       PRCS_ASSINATURA_1 = 'S'
@@ -95,6 +99,8 @@ export const selectPrazoContratoServico3 = (cod: string, queryString: string) =>
     ON
       COCS_FORN_COD =  FORN_COD
     WHERE
+      PRCS_APROVADO != 'S'
+    AND    
       PRCS_USUA_COD_ASS_3 = ${cod}
     AND
       PRCS_ASSINATURA_1 = 'S'
@@ -129,6 +135,8 @@ export const selectPrazoContratoServico4 = (cod: string, queryString: string) =>
     ON
       COCS_FORN_COD =  FORN_COD
     WHERE
+      PRCS_APROVADO != 'S'
+    AND
       PRCS_USUA_COD_ASS_4 = ${cod}
     AND
       PRCS_ASSINATURA_1 = 'S'

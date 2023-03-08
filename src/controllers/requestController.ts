@@ -1,8 +1,5 @@
 import { Request, Response } from 'express'
 import { ListPedidoService } from '../services/request/ListPedidoService'
-import { ListPedidoNumberService } from '../services/request/ListPedidoNumberService'
-import { ListPedidoFornService } from '../services/request/ListPedidoFornService'
-import { ListPedidoFuncService } from '../services/request/ListPedidoFuncService'
 import { ApprovalRequestService } from '../services/request/approvalRequest'
 import { GetDetailsRequestServices } from '../services/request/getDetailsRequestServices'
 import { selectCerePeitPedi } from '../queries/request'
@@ -18,7 +15,7 @@ export default class DailyMovimentController {
 
     const listPedidoService = new ListPedidoService()
 
-    const execute = await listPedidoService.execute(acessToken)
+    const execute = await listPedidoService.execute(acessToken, '')
 
     return response.json(execute)
   }
@@ -32,9 +29,14 @@ export default class DailyMovimentController {
 
     const { numero } = request.params
 
-    const listPedidoNumberService = new ListPedidoNumberService()
+    const queryString = `
+    AND
+      PEDI_NUMERO = '${numero}'
+    `
 
-    const execute = await listPedidoNumberService.execute(acessToken, numero)
+    const listPedidoNumberService = new ListPedidoService()
+
+    const execute = await listPedidoNumberService.execute(acessToken, queryString)
 
     return response.json(execute)
   }
@@ -48,9 +50,14 @@ export default class DailyMovimentController {
 
     const { forn } = request.params
 
-    const listPedidoFornService = new ListPedidoFornService()
+    const queryString = `
+    AND
+      FORN_NOME LIKE '%${forn}%'
+    `
 
-    const execute = await listPedidoFornService.execute(acessToken, forn)
+    const listPedidoFornService = new ListPedidoService()
+
+    const execute = await listPedidoFornService.execute(acessToken, queryString)
 
     return response.json(execute)
   }
@@ -63,10 +70,13 @@ export default class DailyMovimentController {
     const [, acessToken] = authHeader.split(' ')
 
     const { func } = request.params
+    const queryString = `
+    AND
+      PESS_NOME LIKE '%${func}%'
+    `
+    const listPedidoFuncService = new ListPedidoService()
 
-    const listPedidoFuncService = new ListPedidoFuncService()
-
-    const execute = await listPedidoFuncService.execute(acessToken, func)
+    const execute = await listPedidoFuncService.execute(acessToken, queryString)
 
     return response.json(execute)
   }
@@ -77,7 +87,7 @@ export default class DailyMovimentController {
       return response.status(400).json({ message: 'TOKEN IS MISSING' })
     }
     const [, acessToken] = authHeader.split(' ')
-    const { USUA_SENHA_APP, posUsuaCod, pediCod, fornCod, valTotal } = request.body
+    const { USUA_SENHA_APP, posUsuaCod, pediCod, fornCod, valTotal, pediNumero } = request.body
 
     const approvalRequestService = new ApprovalRequestService()
     const sql = selectCerePeitPedi(pediCod)
@@ -90,7 +100,7 @@ export default class DailyMovimentController {
       }
     }
 
-    const approvalRequestExec = await approvalRequestService.execute(acessToken, USUA_SENHA_APP, posUsuaCod, pediCod)
+    const approvalRequestExec = await approvalRequestService.execute(acessToken, USUA_SENHA_APP, posUsuaCod, pediCod, pediNumero)
 
     return response.status(approvalRequestExec.status).json(approvalRequestExec)
   }
@@ -126,8 +136,11 @@ export default class DailyMovimentController {
 
         if (i === sqlExec.length || valid.error === false) {
           const approvalRequestService = new ApprovalRequestService()
-          const approvalRequestExec = await approvalRequestService.execute(acessToken, USUA_SENHA_APP, item[0], item[1])
+          const approvalRequestExec = await approvalRequestService.execute(acessToken, USUA_SENHA_APP, item[0], item[1], item[4])
           pedidosTxt.push(approvalRequestExec.message)
+
+          status = approvalRequestExec.status
+          error = approvalRequestExec.error
         }
       }
     }

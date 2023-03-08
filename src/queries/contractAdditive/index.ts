@@ -26,6 +26,8 @@ export const selectAditivoContrato1 = (cod: string, queryString: string) => {
     ON
       SERV_COD = ADCS_SERV_COD
     WHERE
+      ADCS_APROVADO =! 'S'
+    AND
       ADCS_ASSINATURA_1 != 'S'
     AND
       ADCS_USUA_COD_ASS_1 = ${cod}
@@ -61,6 +63,8 @@ export const selectAditivoContrato2 = (cod: string, queryString: string) => {
     ON
       SERV_COD = ADCS_SERV_COD
     WHERE
+      ADCS_APROVADO =! 'S'
+    AND
       ADCS_ASSINATURA_1 = 'S'
     AND
       ADCS_ASSINATURA_2 != 'S'
@@ -98,6 +102,8 @@ export const selectAditivoContrato3 = (cod: string, queryString: string) => {
     ON
       SERV_COD = ADCS_SERV_COD
     WHERE
+      ADCS_APROVADO =! 'S'
+    AND
       ADCS_ASSINATURA_1 = 'S'
     AND
       ADCS_ASSINATURA_2 = 'S'
@@ -137,6 +143,8 @@ export const selectAditivoContrato4 = (cod: string, queryString: string) => {
     ON
       SERV_COD = ADCS_SERV_COD
     WHERE
+      ADCS_APROVADO =! 'S'
+    AND
       ADCS_ASSINATURA_1 = 'S'
     AND
       ADCS_ASSINATURA_2 = 'S'
