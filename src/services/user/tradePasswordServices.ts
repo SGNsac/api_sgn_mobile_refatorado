@@ -1,10 +1,14 @@
 import bcrypt from 'bcrypt'
-import { UsuarioRepository } from '../../typeorm/repository/usuarioRepositories'
 import validPassword from '../../utils/validPassword'
+import { updatePassword, verifyUserSigla } from '../../queries/user'
+import { queryStringConnect } from '../../sql'
+import sql from 'mssql'
 
 interface Itrade{
     USUA_SIGLA: string,
     USUA_SENHA_APP: string
+    url: string,
+    database: string
 }
 
 interface IReturn {
@@ -17,19 +21,11 @@ export class TradePasswordService {
   public async execute (
     {
       USUA_SIGLA,
-      USUA_SENHA_APP
+      USUA_SENHA_APP,
+      url,
+      database
     } : Itrade
   ): Promise<IReturn> {
-    const existsUser = await UsuarioRepository.findOneBy({ USUA_SIGLA })
-
-    if (!existsUser) {
-      return {
-        message: 'Usuario não existe',
-        error: true,
-        status: 400
-      }
-    }
-
     if (USUA_SENHA_APP.length < 10) {
       return {
         message: 'Senha de conter mais de 10 caracteres',
@@ -46,18 +42,36 @@ export class TradePasswordService {
         status: 400
       }
     }
+    try {
+      const saltRounds = 2
 
-    const saltRounds = 2
-    const passwordHash = await bcrypt.hash(USUA_SENHA_APP, saltRounds)
+      const passwordHash = await bcrypt.hash(USUA_SENHA_APP, saltRounds)
 
-    existsUser.USUA_SENHA_APP = passwordHash
+      const sqlVerifyUserSigla = verifyUserSigla(USUA_SIGLA)
 
-    await UsuarioRepository.save(existsUser)
+      const stringConnect = queryStringConnect(url, database)
 
-    return {
-      message: 'Senha trocada com sucesso ',
-      error: false,
-      status: 200
+      await sql.connect(stringConnect)
+
+      const resultUSerVerify = await sql.query(sqlVerifyUserSigla)
+
+      const cod = resultUSerVerify.recordset[0].USUA_COD
+
+      const sqlUpdatePassword = updatePassword(cod, passwordHash)
+
+      await sql.query(sqlUpdatePassword)
+
+      return {
+        message: 'Senha trocada com sucesso',
+        error: false,
+        status: 400
+      }
+    } catch (error) {
+      return {
+        message: 'Error ' + error,
+        error: true,
+        status: 200
+      }
     }
   }
 }

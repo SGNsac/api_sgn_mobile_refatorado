@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { UsuarioRepository } from '../../typeorm/repository/usuarioRepositories'
 import bcrypt from 'bcrypt'
-import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
+
 import { countNumAprovaPedido, updatePedidoASS } from '../../queries/request'
 
 dotenv.config()

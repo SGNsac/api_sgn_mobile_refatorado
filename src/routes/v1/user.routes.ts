@@ -6,7 +6,7 @@ export const routerUser = express.Router()
 
 const users = new UserController()
 
-routerUser.get('/', users.index)
+// routerUser.get('/', users.index)
 routerUser.patch('/', users.tradePassword)
 routerUser.post('/login', users.login)
-routerUser.get('/acessToken', isAuthenticatedRefresh, users.generateToken)
+// routerUser.get('/acessToken', isAuthenticatedRefresh, users.generateToken)

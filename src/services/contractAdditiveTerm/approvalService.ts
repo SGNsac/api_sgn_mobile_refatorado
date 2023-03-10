@@ -2,7 +2,6 @@ import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueR
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { UsuarioRepository } from '../../typeorm/repository/usuarioRepositories'
 import { countNumAprovAditivoContratoPR, updatePRCS } from '../../queries/contratctAdditiveTerm'
 dotenv.config()
 

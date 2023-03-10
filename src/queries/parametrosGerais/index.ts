@@ -6,3 +6,13 @@ export const selectPag2ContrUsuaSmpCrPedCom = () => {
         PARAMETROS_GERAIS_2
   `
 }
+
+export const selectPageNumAprova = () => {
+  return `
+    SELECT
+      PAG2_NUM_APROVACOES_CONTR,
+      PAG2_TODAS_APROVACOES_CONTR
+    FROM
+      PARAMETROS_GERAIS_2
+  `
+}

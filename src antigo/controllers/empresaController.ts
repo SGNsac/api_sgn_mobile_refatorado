@@ -1,5 +1,4 @@
 import { Request, Response } from 'express'
-import AppError from '../errors/AppError'
 import { ListCompanyUserService } from '../services/company/ListCompanyUserService'
 export default class CompanyController {
   public async list (request: Request, response: Response): Promise<Response> {
