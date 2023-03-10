@@ -44,9 +44,6 @@ export const validCereFornPedi = async (TOKEN: string, cereCod: string, valTotal
   if (selectPag2ContrUsuaSmpCrPedComData[0].PAG2_CONTR_USUA_SMP_CR_PED_COM === 'S') {
     if (USCR_VLR_MAX_APROV_PED > 0) {
       if (USCR_VLR_MAX_APROV_PED < parseInt(valTotal)) {
-        console.log('====================================')
-        console.log(1)
-        console.log('====================================')
         return ({
           message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar nesse CR`,
           error: true,
@@ -56,9 +53,7 @@ export const validCereFornPedi = async (TOKEN: string, cereCod: string, valTotal
     } else {
       if (existsUser.USUA_VALOR_APROVACAO > 0) {
         if (parseInt(valTotal) > existsUser.USUA_VALOR_APROVACAO) {
-          console.log('====================================')
-          console.log(2)
-          console.log('====================================')
+          s
           return ({
             message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar`,
             error: true,
@@ -83,9 +78,6 @@ export const validCereFornPedi = async (TOKEN: string, cereCod: string, valTotal
       totalFornCerePedidoValue += parseInt(valTotal)
 
       if (USCR_VLR_MAX_APROV_PED_FORN < totalFornCerePedidoValue) {
-        console.log('====================================')
-        console.log(3)
-        console.log('====================================')
         return ({
           message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor mensal de aprovação para esse fornecedor`,
           error: true,
@@ -104,9 +96,6 @@ export const validCereFornPedi = async (TOKEN: string, cereCod: string, valTotal
         totalUsuaPedidoValue += parseInt(valTotal)
 
         if (existsUser.USUA_VALOR_APROVACAO_MENSAL < totalUsuaPedidoValue) {
-          console.log('====================================')
-          console.log(4)
-          console.log('====================================')
           return ({
             message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar por mês`,
             error: true,
@@ -117,9 +106,6 @@ export const validCereFornPedi = async (TOKEN: string, cereCod: string, valTotal
     }
   } else {
     if (USCR_VLR_MAX_APROV_PED < parseInt(valTotal)) {
-      console.log('====================================')
-      console.log(5)
-      console.log('====================================')
       return ({
         message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar nesse CR`,
         error: true,
@@ -137,9 +123,6 @@ export const validCereFornPedi = async (TOKEN: string, cereCod: string, valTotal
       totalUsuaPedidoValue += parseInt(valTotal)
 
       if (existsUser.USUA_VALOR_APROVACAO_MENSAL < totalUsuaPedidoValue) {
-        console.log('====================================')
-        console.log(6)
-        console.log('====================================')
         return ({
           message: `Pedido ${pediCod} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar por mês`,
           error: true,
@@ -148,9 +131,7 @@ export const validCereFornPedi = async (TOKEN: string, cereCod: string, valTotal
       }
     }
   }
-  console.log('====================================')
-  console.log(7)
-  console.log('====================================')
+
   return ({
     message: '',
     error: false,

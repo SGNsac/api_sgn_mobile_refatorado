@@ -2,7 +2,6 @@
 import { Request, Response } from 'express'
 import { TradePasswordService } from '../services/user/tradePasswordServices'
 import { LoginService } from '../services/user/loginServices'
-import ListUserService from '../services/user/ListServices'
 import { GenerateTokenService } from '../services/user/GenerateTokenService'
 
 export default class UserController {
@@ -49,21 +48,4 @@ export default class UserController {
 
     return response.status(user.status).json(user)
   }
-
-  // public async generateToken (
-  //   request: Request,
-  //   response: Response
-  // ): Promise<Response> {
-  //   const authHeader = request.headers.authorization
-  //   if (!authHeader) {
-  //     return response.status(400).json({ message: 'TOKEN IS MISSING' })
-  //   }
-  //   const [, refreshToken] = authHeader.split(' ')
-
-  //   const generateToken = new GenerateTokenService()
-
-  //   const acessToken = await generateToken.execute(refreshToken)
-
-  //   return response.json({ acessToken })
-  // }
 }

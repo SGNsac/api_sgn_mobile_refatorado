@@ -1,37 +1,42 @@
-import { UsuarioRepository } from '../../typeorm/repository/usuarioRepositories'
+import { verifyUserSigla } from '../../queries/user'
+import { queryStringConnect } from '../../sql'
+import sql from 'mssql'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
 dotenv.config()
 
-interface IdecodeAcessToken {
-  sigla: string,
-}
-
 export class GenerateTokenService {
-  public async execute (TOKEN:string): Promise<string> {
+  public async execute (
+    TOKEN: string,
+    usuario: string,
+    url: string,
+    database: string
+  ) {
     const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
 
-    const secretRefresh = process.env.TOKEN_SECRET_REFRESH + ''
+    const verifyUserSiglaSQL = verifyUserSigla(usuario)
 
-    const decodeToken = jwt.verify(TOKEN, secretRefresh) as IdecodeAcessToken
+    console.log('====================================')
+    console.log(verifyUserSiglaSQL)
+    console.log('====================================')
 
-    const USUA_SIGLA = decodeToken.sigla
+    const stringConnect = queryStringConnect(url, database)
 
-    const existsUser = await UsuarioRepository.findOneBy({ USUA_SIGLA })
+    await sql.connect(stringConnect)
 
-    const refreshToken = TOKEN
+    const resultVerify = await sql.query(verifyUserSiglaSQL)
 
-    if (!existsUser) {
+    if (resultVerify.recordset[0].length <= 0) {
       return 'usuario invalido'
     }
 
-    const codUser = existsUser.USUA_COD
+    const codUser = resultVerify.recordset[0].USUA_COD
 
     const acessToken = jwt.sign(
       {
-        refreshToken,
-        USUA_SIGLA,
+        TOKEN,
+        usuario,
         codUser
       },
       secretAcess,

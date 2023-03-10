@@ -111,10 +111,6 @@ export class DetailsResultCenterService {
       }
     }
 
-    console.log('====================================')
-    console.log(sqlSelectDetails)
-    console.log('====================================')
-
     return {
       error: false,
       message: responseDados,

@@ -41,9 +41,6 @@ export class ApprovalRequestService {
     const comparePassword = await bcrypt.compare(USUA_SENHA_APP, passwordBD)
 
     if (!comparePassword) {
-      console.log('====================================')
-      console.log(1)
-      console.log('====================================')
       return ({
         message: 'Senha incorreta',
         error: true,

@@ -3,6 +3,10 @@ import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
+interface IdecodeAcessToken {
+  USUA_SIGLA: string,
+}
+
 const isAuthenticated = (
   request: Request,
   response: Response,
@@ -17,8 +21,10 @@ const isAuthenticated = (
   }
   const [, token] = authHeader.split(' ')
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const decodeToken = jwt.verify(token, secret)
+    const decodeToken = jwt.verify(token, secret) as IdecodeAcessToken
+
+    request.globalSigla = decodeToken.USUA_SIGLA
+
     return next()
   } catch {
     return response.status(400).json({ message: 'TOKEN IS INVALID' })
