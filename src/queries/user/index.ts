@@ -2,7 +2,9 @@ export const verifyUser = (cod: string) => {
   return `
     SELECT 
       USUA_SENHA_APP,
-      USUA_BLOQ
+      USUA_BLOQ,
+      USUA_VALOR_APROVACAO,
+      USUA_VALOR_APROVACAO_MENSAL
     FROM 
       USUARIO
     WHERE

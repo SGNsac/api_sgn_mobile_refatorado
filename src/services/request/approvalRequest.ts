@@ -1,91 +1,88 @@
-import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
+
 import bcrypt from 'bcrypt'
-
+import sql from 'mssql'
 import { countNumAprovaPedido, updatePedidoASS } from '../../queries/request'
-
-dotenv.config()
-
-interface IdecodeAcessToken {
-    refreshToken: string,
-    USUA_SIGLA: string,
-    codUser: string
-}
-
-interface IResponse{
-  message: string,
-  error: boolean,
-  status: number,
-}
+import { verifyUser } from '../../queries/user'
+import { queryStringConnect } from '../../sql'
+import { selectAprovaPedido } from '../../queries/parametrosGerais'
 
 export class ApprovalRequestService {
-  public async execute (TOKEN: string, USUA_SENHA_APP: string, posUsuaCod: string, pediCod: string, pediNumero: string): Promise<IResponse> {
-    const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
+  public async execute (
+    USUA_SENHA_APP: string,
+    posUsuaCod: string,
+    pediCod: string,
+    pediNumero: string,
+    codUsua: string,
+    url: string,
+    database:string
+  )/*: Promise<IResponse> */ {
+    try {
+      const verifyUserSiglaSQL = verifyUser(codUsua)
 
-    const decodeToken = jwt.verify(TOKEN, secretAcess) as IdecodeAcessToken
+      const stringConnect = queryStringConnect(url, database)
 
-    const cod = parseInt(decodeToken.codUser)
+      await sql.connect(stringConnect)
 
-    const existsUser = await UsuarioRepository.findOneBy({ USUA_COD: cod })
+      const resultVerify = await sql.query(verifyUserSiglaSQL)
 
-    if (!existsUser) {
-      return ({
-        message: 'Codigo incorreto',
-        error: true,
-        status: 400
-      })
-    }
+      if (resultVerify.recordset[0].length <= 0) {
+        return ({
+          message: 'Úsuario não existente',
+          error: true,
+          status: 400
+        })
+      }
 
-    const passwordBD = existsUser.USUA_SENHA_APP
+      const passwordBD = resultVerify.recordset[0].USUA_SENHA_APP
 
-    const comparePassword = await bcrypt.compare(USUA_SENHA_APP, passwordBD)
+      const comparePassword = await bcrypt.compare(USUA_SENHA_APP, passwordBD)
 
-    if (!comparePassword) {
-      return ({
-        message: 'Senha incorreta',
-        error: true,
-        status: 400
-      })
-    }
+      if (!comparePassword) {
+        return ({
+          message: 'Senha incorreta',
+          error: true,
+          status: 400
+        })
+      }
 
-    let sqlQuery = ''
+      let sqlQuery = ''
 
-    const sqlCountNumAprovaPedido = countNumAprovaPedido(pediCod)
+      const sqlCountNumAprovaPedido = countNumAprovaPedido(pediCod)
 
-    const valCountNumAprovaPedido = await PedidoEstoqueRepository.query(sqlCountNumAprovaPedido)
+      const valCountNumAprovaPedido = await sql.query(sqlCountNumAprovaPedido)
 
-    const valCountNumAprovaPedidoBD = await PedidoEstoqueRepository.query(
-      `
-      SELECT 
-        PAGE_NUM_APROVACOES_PEDIDO,
-        PAGE_TODAS_APROVACOES_PEDIDO
-      FROM 
-        PARAMETROS_GERAIS
-      `
-    )
+      const selectAprovaPedidoQuery = selectAprovaPedido()
 
-    if (valCountNumAprovaPedidoBD[0].PAGE_TODAS_APROVACOES_PEDIDO === 'S') {
-      if (valCountNumAprovaPedidoBD[0].PAGE_NUM_APROVACOES_PEDIDO === 1) {
-        sqlQuery = "PEDI_STATUS = 'A',"
-      } else if (valCountNumAprovaPedidoBD[0].PAGE_NUM_APROVACOES_PEDIDO === 2 && valCountNumAprovaPedido[0].NUM === 1) {
-        sqlQuery = "PEDI_STATUS = 'A',"
-      } else if (valCountNumAprovaPedidoBD[0].PAGE_NUM_APROVACOES_PEDIDO === 3 && valCountNumAprovaPedido[0].NUM === 2) {
-        sqlQuery = "PEDI_STATUS = 'A',"
-      } else if (valCountNumAprovaPedidoBD[0].PAGE_NUM_APROVACOES_PEDIDO === 4 && valCountNumAprovaPedido[0].NUM === 3) {
+      const valCountNumAprovaPedidoBD = await sql.query(selectAprovaPedidoQuery)
+
+      if (valCountNumAprovaPedidoBD.recordset[0].PAGE_TODAS_APROVACOES_PEDIDO === 'S') {
+        if (valCountNumAprovaPedidoBD.recordset[0].PAGE_NUM_APROVACOES_PEDIDO === 1) {
+          sqlQuery = "PEDI_STATUS = 'A',"
+        } else if (valCountNumAprovaPedidoBD.recordset[0].PAGE_NUM_APROVACOES_PEDIDO === 2 && valCountNumAprovaPedido.recordset[0].NUM === 1) {
+          sqlQuery = "PEDI_STATUS = 'A',"
+        } else if (valCountNumAprovaPedidoBD.recordset[0].PAGE_NUM_APROVACOES_PEDIDO === 3 && valCountNumAprovaPedido.recordset[0].NUM === 2) {
+          sqlQuery = "PEDI_STATUS = 'A',"
+        } else if (valCountNumAprovaPedidoBD.recordset[0].PAGE_NUM_APROVACOES_PEDIDO === 4 && valCountNumAprovaPedido.recordset[0].NUM === 3) {
+          sqlQuery = "PEDI_STATUS = 'A',"
+        }
+      } else {
         sqlQuery = "PEDI_STATUS = 'A',"
       }
-    } else {
-      sqlQuery = "PEDI_STATUS = 'A',"
+      const sqlQueryUpdate = updatePedidoASS(pediCod, posUsuaCod, sqlQuery)
+
+      await sql.query(sqlQueryUpdate)
+
+      return ({
+        message: `Pedido ${pediNumero} aprovado com sucesso`,
+        error: false,
+        status: 200
+      })
+    } catch (e) {
+      return ({
+        message: 'Error = ' + e,
+        error: true,
+        status: 400
+      })
     }
-
-    const sql = updatePedidoASS(pediCod, posUsuaCod, sqlQuery)
-
-    await PedidoEstoqueRepository.query(sql)
-
-    return ({
-      message: `Pedido ${pediNumero} aprovado com sucesso`,
-      error: false,
-      status: 200
-    })
   }
 }

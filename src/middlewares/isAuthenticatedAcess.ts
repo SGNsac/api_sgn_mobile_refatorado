@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 
 interface IdecodeAcessToken {
   sigla: string,
-  cod: string
+  codUser: string
 }
 
 const isAuthenticated = (
@@ -25,7 +25,7 @@ const isAuthenticated = (
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const decodeToken = jwt.verify(token, secret) as IdecodeAcessToken
 
-    const cod = decodeToken.cod
+    const cod = decodeToken.codUser
 
     request.globalCodigo = cod
     console.log('====================================')

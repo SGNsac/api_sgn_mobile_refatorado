@@ -13,38 +13,38 @@ export class GenerateTokenService {
     url: string,
     database: string
   ) {
-    const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
+    try {
+      const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
 
-    const verifyUserSiglaSQL = verifyUserSigla(usuario)
+      const verifyUserSiglaSQL = verifyUserSigla(usuario)
 
-    console.log('====================================')
-    console.log(verifyUserSiglaSQL)
-    console.log('====================================')
+      const stringConnect = queryStringConnect(url, database)
 
-    const stringConnect = queryStringConnect(url, database)
+      await sql.connect(stringConnect)
 
-    await sql.connect(stringConnect)
+      const resultVerify = await sql.query(verifyUserSiglaSQL)
 
-    const resultVerify = await sql.query(verifyUserSiglaSQL)
-
-    if (resultVerify.recordset[0].length <= 0) {
-      return 'usuario invalido'
-    }
-
-    const codUser = resultVerify.recordset[0].USUA_COD
-
-    const acessToken = jwt.sign(
-      {
-        TOKEN,
-        usuario,
-        codUser
-      },
-      secretAcess,
-      {
-        expiresIn: '2h'
+      if (resultVerify.recordset[0].length <= 0) {
+        return 'usuario invalido'
       }
-    )
 
-    return acessToken
+      const codUser = resultVerify.recordset[0].USUA_COD
+
+      const acessToken = jwt.sign(
+        {
+          TOKEN,
+          usuario,
+          codUser
+        },
+        secretAcess,
+        {
+          expiresIn: '2h'
+        }
+      )
+
+      return acessToken
+    } catch (e) {
+      return 'Error = ' + e
+    }
   }
 }

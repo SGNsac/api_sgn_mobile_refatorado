@@ -16,3 +16,13 @@ export const selectPageNumAprova = () => {
       PARAMETROS_GERAIS_2
   `
 }
+
+export const selectAprovaPedido = () => {
+  return `
+    SELECT
+      PAGE_NUM_APROVACOES_PEDIDO,
+      PAGE_TODAS_APROVACOES_PEDIDO
+    FROM
+      PARAMETROS_GERAIS
+  `
+}

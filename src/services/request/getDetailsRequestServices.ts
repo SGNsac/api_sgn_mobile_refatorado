@@ -1,12 +1,17 @@
 import { selectPedidosItemServico } from '../../queries/request'
-import { PedidoEstoqueRepository } from '../../typeorm/repository/pedidoEstoqueRepositories'
+import { queryStringConnect } from '../../sql'
+import sql from 'mssql'
 
 export class GetDetailsRequestServices {
-  public async execute (PEDI_COD : string) {
-    const sql = selectPedidosItemServico(PEDI_COD)
-    console.log(sql)
+  public async execute (PEDI_COD: string, database: string, url: string) {
+    const stringConnect = queryStringConnect(url, database)
+    console.log('====================================')
+    console.log(stringConnect)
+    console.log('====================================')
+    sql.connect(stringConnect)
+    const sqlQuery = selectPedidosItemServico(PEDI_COD)
 
-    const requestItens = await PedidoEstoqueRepository.query(sql)
-    return requestItens
+    const requestItens = await sql.query(sqlQuery)
+    return requestItens.recordset
   }
 }

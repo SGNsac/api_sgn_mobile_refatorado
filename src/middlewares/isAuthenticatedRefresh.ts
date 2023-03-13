@@ -15,11 +15,15 @@ const isAuthenticated = (
   const authHeader = request.headers.authorization
 
   dotenv.config()
+
   const secret = process.env.TOKEN_SECRET_REFRESH + ''
+
   if (!authHeader) {
     return response.status(400).json({ message: 'TOKEN IS MISSING' })
   }
+
   const [, token] = authHeader.split(' ')
+
   try {
     const decodeToken = jwt.verify(token, secret) as IdecodeAcessToken
 
