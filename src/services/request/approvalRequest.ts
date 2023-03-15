@@ -1,10 +1,9 @@
 
-import bcrypt from 'bcrypt'
 import sql from 'mssql'
 import { countNumAprovaPedido, updatePedidoASS } from '../../queries/request'
-import { verifyUser } from '../../queries/user'
 import { queryStringConnect } from '../../sql'
 import { selectAprovaPedido } from '../../queries/parametrosGerais'
+import { verifyValidUser } from '../../utils/validUser'
 
 export class ApprovalRequestService {
   public async execute (
@@ -17,31 +16,19 @@ export class ApprovalRequestService {
     database:string
   )/*: Promise<IResponse> */ {
     try {
-      const verifyUserSiglaSQL = verifyUser(codUsua)
+      // const verifyUserSiglaSQL = verifyUser(codUsua)
 
       const stringConnect = queryStringConnect(url, database)
 
       await sql.connect(stringConnect)
 
-      const resultVerify = await sql.query(verifyUserSiglaSQL)
+      const verifyValidUserFunc = await verifyValidUser({ codUsua, url, database, senhaApp: USUA_SENHA_APP, tipo: '', valorTotalSoco: 0 })
 
-      if (resultVerify.recordset[0].length <= 0) {
+      if (verifyValidUserFunc.error === true) {
         return ({
-          message: 'Úsuario não existente',
-          error: true,
-          status: 400
-        })
-      }
-
-      const passwordBD = resultVerify.recordset[0].USUA_SENHA_APP
-
-      const comparePassword = await bcrypt.compare(USUA_SENHA_APP, passwordBD)
-
-      if (!comparePassword) {
-        return ({
-          message: 'Senha incorreta',
-          error: true,
-          status: 400
+          message: verifyValidUserFunc.message,
+          error: verifyValidUserFunc.error,
+          status: verifyValidUserFunc.status
         })
       }
 

@@ -27,11 +27,10 @@ export class ApprovalContractAdditive {
 
     const cod = parseInt(decodeToken.codUser)
 
-    const stringConnect = queryStringConnect(url, database)
-
-    const sqlVerifySql = verifyUser(cod + '')
-
     try {
+      const stringConnect = queryStringConnect(url, database)
+
+      const sqlVerifySql = verifyUser(cod + '')
       await sql.connect(stringConnect)
       const resultVerify = await sql.query(sqlVerifySql)
 

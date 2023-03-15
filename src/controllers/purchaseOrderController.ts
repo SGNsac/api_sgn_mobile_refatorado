@@ -1,152 +1,145 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express'
-import { ListPurchaseOrderService } from '../services/purchase_order/listPurchaseOrder'
-import { ApprovalPurchaseOrderService } from '../services/purchase_order/approvalPurchaseOrder'
-import { ListPurchaseOrderNumberService } from '../services/purchase_order/listPurchaseOrderNumber'
-import { ListPurchaseOrderWarehouseService } from '../services/purchase_order/listPurchaseOrderAlmoxa'
-import { ListPurchaseOrderPurchasingSector } from '../services/purchase_order/listPurchaseOrderPurchasingSector'
-import { ListPurchaseOrderCrService } from '../services/purchase_order/listPurchaseOrderCR'
-import { ListPurchaseOrderDateService } from '../services/purchase_order/listPurchaseOrderDate'
+import { ListPurchaseOrderService } from '../services/purchaseOrder/listPurchaseOrder'
+import { ApprovalPurchaseOrderService } from '../services/purchaseOrder/approvalPurchaseOrder'
 
 export class PurchaseOrderController {
   public async list (request: Request, response: Response) {
-    const authHeader = request.headers.authorization
-    if (!authHeader) {
-      return response.status(400).json({ message: 'TOKEN IS MISSING' })
-    }
-    const [, acessToken] = authHeader.split(' ')
+    const { url, database } = request.body
 
     const listPurchaseOrderService = new ListPurchaseOrderService()
 
-    const listPurchaseOrderServiceExec = await listPurchaseOrderService.execute(acessToken)
+    const listPurchaseOrderServiceExec = await listPurchaseOrderService.execute(request.globalCodigo, url, database, '')
 
-    response.json(listPurchaseOrderServiceExec)
+    return response.status(listPurchaseOrderServiceExec.status).json({
+      message: listPurchaseOrderServiceExec.message,
+      error: listPurchaseOrderServiceExec.error,
+      status: listPurchaseOrderServiceExec.status
+    })
   }
 
   public async approvalOrderPurchase (request: Request, response: Response) {
-    const authHeader = request.headers.authorization
-
-    if (!authHeader) {
-      return response.status(400).json({ message: 'TOKEN IS MISSING' })
-    }
-
-    const [, acessToken] = authHeader.split(' ')
-
     const approvalPurchaseOrderService = new ApprovalPurchaseOrderService()
 
     const {
       USUA_SENHA_APP,
-      arraySolicitacaoCompra
+      arraySolicitacaoCompra,
+      url,
+      database
     } = request.body
 
-    let soliCompraTxt = ''
+    let error = false
 
-    arraySolicitacaoCompra.forEach(async (item: any) => {
-      soliCompraTxt = `${soliCompraTxt} ${item[2]}`
+    let status = 400
 
-      await approvalPurchaseOrderService.execute(
-        acessToken,
+    const message: string[] = []
+
+    for await (const item of arraySolicitacaoCompra) {
+      const execute = await approvalPurchaseOrderService.execute(
+        request.globalCodigo,
         USUA_SENHA_APP,
-        item[1],
-        item[0],
-        item[3]
+        item.assPos,
+        item.socoCod,
+        item.valorTotalSoco,
+        url,
+        database,
+        item.socoNumber
       )
-    })
+      if (execute.error) {
+        error = execute.error
+        status = execute.status
+      }
+      message.push(execute.message)
+    }
 
-    return response.status(200).json({
-      message: 'Solicitações aprovadas com sucesso',
-      error: false,
-      status: 200
+    return response.status(status).json({
+      message,
+      error,
+      status
     })
   }
 
   public async listFilerNumber (request: Request, response: Response) {
-    const authHeader = request.headers.authorization
+    const { url, database, numeroSoco } = request.body
 
-    if (!authHeader) {
-      return response.status(400).json({ message: 'TOKEN IS MISSING' })
-    }
+    const listPurchaseOrderService = new ListPurchaseOrderService()
+    const queryString = `
+    AND
+      SOCO_NUMERO = ${numeroSoco}
+    `
+    const listPurchaseOrderServiceExec = await listPurchaseOrderService.execute(request.globalCodigo, url, database, queryString)
 
-    const [, acessToken] = authHeader.split(' ')
-
-    const { numeroSoco } = request.params
-
-    const listPurchaseOrderNumberService = new ListPurchaseOrderNumberService()
-
-    const listPurchaseOrderNumberServiceExec = await listPurchaseOrderNumberService.execute(acessToken, numeroSoco)
-
-    response.json(listPurchaseOrderNumberServiceExec)
+    return response.status(listPurchaseOrderServiceExec.status).json({
+      message: listPurchaseOrderServiceExec.message,
+      error: listPurchaseOrderServiceExec.error,
+      status: listPurchaseOrderServiceExec.status
+    })
   }
 
   public async listFilerWarehouse (request: Request, response: Response) {
-    const authHeader = request.headers.authorization
+    const { url, database, almoDesc } = request.body
 
-    if (!authHeader) {
-      return response.status(400).json({ message: 'TOKEN IS MISSING' })
-    }
+    const listPurchaseOrderService = new ListPurchaseOrderService()
+    const queryString = `
+    AND
+      ALMO_DESC LIKE '%${almoDesc}%'
+    `
+    const listPurchaseOrderServiceExec = await listPurchaseOrderService.execute(request.globalCodigo, url, database, queryString)
 
-    const [, acessToken] = authHeader.split(' ')
-
-    const { almoDesc } = request.params
-
-    const listPurchaseOrderWarehouseService = new ListPurchaseOrderWarehouseService()
-
-    const listPurchaseOrderWarehouseServiceExec = await listPurchaseOrderWarehouseService.execute(acessToken, almoDesc)
-
-    response.json(listPurchaseOrderWarehouseServiceExec)
+    return response.status(listPurchaseOrderServiceExec.status).json({
+      message: listPurchaseOrderServiceExec.message,
+      error: listPurchaseOrderServiceExec.error,
+      status: listPurchaseOrderServiceExec.status
+    })
   }
 
   public async listFilerPurchasingSector (request: Request, response: Response) {
-    const authHeader = request.headers.authorization
+    const { url, database, secoDesc } = request.body
 
-    if (!authHeader) {
-      return response.status(400).json({ message: 'TOKEN IS MISSING' })
-    }
+    const listPurchaseOrderService = new ListPurchaseOrderService()
+    const queryString = `
+    AND
+      SECO_DESC LIKE '%${secoDesc}%'
+    `
+    const listPurchaseOrderServiceExec = await listPurchaseOrderService.execute(request.globalCodigo, url, database, queryString)
 
-    const [, acessToken] = authHeader.split(' ')
-
-    const { secoDesc } = request.params
-
-    const listPurchaseOrderPurchasingSector = new ListPurchaseOrderPurchasingSector()
-
-    const listPurchaseOrderPurchasingSectorExec = await listPurchaseOrderPurchasingSector.execute(acessToken, secoDesc)
-
-    response.json(listPurchaseOrderPurchasingSectorExec)
+    return response.status(listPurchaseOrderServiceExec.status).json({
+      message: listPurchaseOrderServiceExec.message,
+      error: listPurchaseOrderServiceExec.error,
+      status: listPurchaseOrderServiceExec.status
+    })
   }
 
   public async listFilerCr (request: Request, response: Response) {
-    const authHeader = request.headers.authorization
+    const { url, database, cereNome } = request.body
 
-    if (!authHeader) {
-      return response.status(400).json({ message: 'TOKEN IS MISSING' })
-    }
+    const listPurchaseOrderService = new ListPurchaseOrderService()
+    const queryString = `
+    AND
+      CERE_NOME LIKE '%${cereNome}%'
+    `
+    const listPurchaseOrderServiceExec = await listPurchaseOrderService.execute(request.globalCodigo, url, database, queryString)
 
-    const [, acessToken] = authHeader.split(' ')
-
-    const { cereDesc } = request.params
-
-    const listPurchaseOrderCrService = new ListPurchaseOrderCrService()
-
-    const listPurchaseOrderCrServiceExec = await listPurchaseOrderCrService.execute(acessToken, cereDesc)
-
-    response.json(listPurchaseOrderCrServiceExec)
+    return response.status(listPurchaseOrderServiceExec.status).json({
+      message: listPurchaseOrderServiceExec.message,
+      error: listPurchaseOrderServiceExec.error,
+      status: listPurchaseOrderServiceExec.status
+    })
   }
 
   public async listFilerDate (request: Request, response: Response) {
-    const authHeader = request.headers.authorization
+    const { url, database, data } = request.body
 
-    if (!authHeader) {
-      return response.status(400).json({ message: 'TOKEN IS MISSING' })
-    }
+    const listPurchaseOrderService = new ListPurchaseOrderService()
+    const queryString = `
+    AND
+      SOCO_DTSOLI = '${data}'
+    `
+    const listPurchaseOrderServiceExec = await listPurchaseOrderService.execute(request.globalCodigo, url, database, queryString)
 
-    const [, acessToken] = authHeader.split(' ')
-
-    const { data } = request.params
-
-    const listPurchaseOrderDateService = new ListPurchaseOrderDateService()
-
-    const listPurchaseOrderDateServiceExec = await listPurchaseOrderDateService.execute(acessToken, data)
-
-    response.json(listPurchaseOrderDateServiceExec)
+    return response.status(listPurchaseOrderServiceExec.status).json({
+      message: listPurchaseOrderServiceExec.message,
+      error: listPurchaseOrderServiceExec.error,
+      status: listPurchaseOrderServiceExec.status
+    })
   }
 }
