@@ -85,10 +85,6 @@ export class ListPedidoService {
         const listPedido3 = await sql.query(sql3)
         const listPedido4 = await sql.query(sql4)
 
-        console.log('====================================')
-        console.log(sql1)
-        console.log('====================================')
-
         if (listPedido1.recordset.length > 0) {
           listPedido1.recordset.map((pos: any) => array.push(pos))
         }

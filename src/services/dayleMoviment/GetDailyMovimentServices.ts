@@ -1,35 +1,41 @@
-import dotenv from 'dotenv'
-import { MovimentoDiarioRepository } from '../../typeorm/repository/movimentoDiarioRepositories'
-import jwt from 'jsonwebtoken'
 import { selectMovimentacao } from '../../queries/movDiaria'
-
-dotenv.config()
-
-interface IdecodeAcessToken {
-  refreshToken: string,
-  USUA_SIGLA: string,
-  codUser: string
-}
+import sql from 'mssql'
+import { queryStringConnect } from '../../sql'
 
 interface IResponse {
-  DEBITO: number,
-  CREDITO: number,
-  SALDO: number,
-  DATA: string,
-  GACO_NOME:string
+  message: {
+    DEBITO: number,
+    CREDITO: number,
+    SALDO: number,
+    DATA: string,
+    GACO_NOME: string
+  }[] | string,
+  erro: boolean,
+  status: number
 }
 
 export class GetDailyMovimentServices {
-  public async execute (TOKEN: string): Promise<IResponse> {
-    const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
+  public async execute (cod: string, url: string, database: string): Promise<IResponse | string> {
+    try {
+      const stringConnect = queryStringConnect(url, database)
 
-    const decodeToken = jwt.verify(TOKEN, secretAcess) as IdecodeAcessToken
+      await sql.connect(stringConnect)
 
-    const USUA_SIGLA = decodeToken.USUA_SIGLA
+      const sqlQuery = selectMovimentacao(cod)
 
-    const sql = selectMovimentacao(USUA_SIGLA)
-    console.log(sql)
-    const usersTableMeta = await MovimentoDiarioRepository.query(sql)
-    return usersTableMeta
+      const usersTableMeta = await sql.query(sqlQuery)
+
+      return ({
+        message: usersTableMeta.recordset,
+        erro: false,
+        status: 200
+      })
+    } catch (e) {
+      return ({
+        message: 'Ocorreu um erro' + e,
+        erro: true,
+        status: 400
+      })
+    }
   }
 }

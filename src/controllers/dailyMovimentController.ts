@@ -7,41 +7,33 @@ import { DetailsMoivmentService } from '../services/dayleMoviment/DetailsMoivmen
 
 export default class DailyMovimentController {
   public async list (request: Request, response: Response): Promise<Response> {
-    const authHeader = request.headers.authorization
-    if (!authHeader) {
-      return response.status(400).json({ message: 'Token is missing' })
-    }
-    const [, acessToken] = authHeader.split(' ')
-
-    const getDailyMovimentServices = await new GetDailyMovimentServices()
-
-    const execute = await getDailyMovimentServices.execute(acessToken)
+    const { url, database } = request.body
+    const getDailyMovimentServices = new GetDailyMovimentServices()
+    const execute = await getDailyMovimentServices.execute(
+      request.globalCodigo,
+      url,
+      database
+    )
 
     return response.json(execute)
   }
 
   public async listCmb (request: Request, response: Response): Promise<Response> {
-    const authHeader = request.headers.authorization
-    if (!authHeader) {
-      return response.status(400).json({ message: 'Token is missing' })
-    }
-    const [, acessToken] = authHeader.split(' ')
+    const { url, database } = request.body
 
     const getDailyMovimentComboAplicacaoServices = await new GetDailyMovimentComboAplicacaoServices()
 
-    const execute = await getDailyMovimentComboAplicacaoServices.execute(acessToken)
+    const execute = await getDailyMovimentComboAplicacaoServices.execute(
+      request.globalCodigo,
+      url,
+      database
+    )
 
-    return response.json(execute)
+    return response.status(execute.status).json(execute)
   }
 
   public async FilterAplicacaoNome (request: Request, response: Response): Promise<Response> {
-    const authHeader = request.headers.authorization
-    if (!authHeader) {
-      return response.status(400).json({ message: 'Token is missing' })
-    }
-    const [, acessToken] = authHeader.split(' ')
-
-    const { aplicacao } = request.params
+    const { aplicacao, url, database } = request.body
 
     if (!aplicacao) {
       return response.status(400).json({ message: 'Data is missing' })
@@ -49,20 +41,18 @@ export default class DailyMovimentController {
 
     const filterAplicacao = await new FilterAplicacao()
 
-    const execute = await filterAplicacao.execute(acessToken, aplicacao)
+    const execute = await filterAplicacao.execute(
+      request.globalCodigo,
+      aplicacao,
+      url,
+      database
+    )
 
-    return response.json(execute)
+    return response.status(execute.status).json(execute)
   }
 
   public async FilterAplicacaoDataAndApl (request: Request, response: Response): Promise<Response> {
-    const authHeader = request.headers.authorization
-
-    if (!authHeader) {
-      return response.status(400).json({ message: 'Token is missing' })
-    }
-    const [, acessToken] = authHeader.split(' ')
-
-    const { aplicacao, dataIni, dataFim } = request.body
+    const { aplicacao, dataIni, dataFim, url, database } = request.body
 
     if (!dataIni || !dataFim) {
       return response.status(400).json({ message: 'Data is missing' })
@@ -70,20 +60,20 @@ export default class DailyMovimentController {
 
     const filterDataAndAplMovimentService = new FilterDataAndAplMovimentService()
 
-    const execute = await filterDataAndAplMovimentService.execute(acessToken, dataIni, dataFim, aplicacao)
+    const execute = await filterDataAndAplMovimentService.execute(
+      request.globalCodigo,
+      dataIni,
+      dataFim,
+      aplicacao,
+      url,
+      database
+    )
 
-    return response.json(execute)
+    return response.status(execute.status).json(execute)
   }
 
   public async DetailsAplicacaoDataAndApl (request: Request, response: Response): Promise<Response> {
-    const authHeader = request.headers.authorization
-
-    if (!authHeader) {
-      return response.status(400).json({ message: 'Token missing' })
-    }
-    const [, acessToken] = authHeader.split(' ')
-
-    const { aplicacao, date } = request.query
+    const { aplicacao, date, url, database } = request.body
 
     if (!date) {
       return response.status(400).json({ message: 'Data is missing' })
@@ -92,13 +82,13 @@ export default class DailyMovimentController {
     const detailsMoivmentService = new DetailsMoivmentService()
 
     if (!aplicacao) {
-      const execute = await detailsMoivmentService.execute(acessToken, date.toString(), '')
+      const execute = await detailsMoivmentService.execute(request.globalCodigo, date.toString(), '', url, database)
 
       return response.json(execute)
     }
 
-    const execute = await detailsMoivmentService.execute(acessToken, date.toString(), aplicacao.toString())
+    const execute = await detailsMoivmentService.execute(request.globalCodigo, date.toString(), aplicacao.toString(), url, database)
 
-    return response.json(execute)
+    return response.status(execute.status).json(execute)
   }
 }

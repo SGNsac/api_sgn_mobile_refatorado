@@ -1,43 +1,53 @@
-import dotenv from 'dotenv'
-import { MovimentoDiarioRepository } from '../../typeorm/repository/movimentoDiarioRepositories'
-import jwt from 'jsonwebtoken'
 import { selectMovimentFilterData, selectMovimentFilterDataAndApl } from '../../queries/movDiaria'
+import sql from 'mssql'
+import { queryStringConnect } from '../../sql'
 
-dotenv.config()
-
-interface IdecodeAcessToken {
-    refreshToken: string,
-    USUA_SIGLA: string,
-    codUser: string
-}
 interface IResponse {
+  message: {
     DEBITO: number,
     CREDITO: number,
     SALDO: number,
     DATA: string,
     GACO_NOME: string
-
+  }[] | string;
+  error: boolean;
+  status: number;
 }
 
 export class FilterDataAndAplMovimentService {
-  public async execute (TOKEN: string, dataIni: string, dataFim:string, aplicacao:string): Promise<IResponse> {
-    const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
+  public async execute (cod: string, dataIni: string, dataFim: string, aplicacao: string, url: string, database: string): Promise<IResponse> {
+    try {
+      const stringConnect = queryStringConnect(url, database)
 
-    const decodeToken = jwt.verify(TOKEN, secretAcess) as IdecodeAcessToken
+      sql.connect(stringConnect)
 
-    const USUA_SIGLA = decodeToken.USUA_SIGLA
+      if (aplicacao === '') {
+        const sqlQuery = selectMovimentFilterData(cod, dataIni, dataFim)
 
-    if (aplicacao === '') {
-      const sql = selectMovimentFilterData(USUA_SIGLA, dataIni, dataFim)
+        const movimentQuery = await sql.query(sqlQuery)
 
-      const movimentQuery = await MovimentoDiarioRepository.query(sql)
+        return ({
+          message: movimentQuery.recordset,
+          error: false,
+          status: 200
+        })
+      }
 
-      return movimentQuery
+      const sqlQuery = selectMovimentFilterDataAndApl(cod, dataIni, dataFim, aplicacao)
+
+      const movimentQuery = await sql.query(sqlQuery)
+
+      return ({
+        message: movimentQuery.recordset,
+        error: false,
+        status: 200
+      })
+    } catch (e) {
+      return ({
+        message: 'Erro = ' + e,
+        error: true,
+        status: 400
+      })
     }
-    const sql = selectMovimentFilterDataAndApl(USUA_SIGLA, dataIni, dataFim, aplicacao)
-
-    const movimentQuery = await MovimentoDiarioRepository.query(sql)
-
-    return movimentQuery
   }
 }

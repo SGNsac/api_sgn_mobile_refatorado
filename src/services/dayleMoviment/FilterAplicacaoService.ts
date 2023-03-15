@@ -1,33 +1,39 @@
-import dotenv from 'dotenv'
-import { MovimentoDiarioRepository } from '../../typeorm/repository/movimentoDiarioRepositories'
-import jwt from 'jsonwebtoken'
 import { selectMovimentacaoAplicacao } from '../../queries/movDiaria'
-
-dotenv.config()
-
-interface IdecodeAcessToken {
-    refreshToken: string,
-    USUA_SIGLA: string,
-    codUser: string
-}
+import sql from 'mssql'
+import { queryStringConnect } from '../../sql'
 interface IResponse {
+  message: {
     DEBITO: number,
     CREDITO: number,
     SALDO: number,
     DATA: string
+  }[] | string,
+  erro: boolean,
+  status: number
 }
 
 export class FilterAplicacao {
-  public async execute (TOKEN: string, aplicacao: string): Promise<IResponse> {
-    const secretAcess = process.env.TOKEN_SECRET_ACESS + ''
+  public async execute (cod: string, aplicacao: string, url: string, database: string): Promise<IResponse> {
+    try {
+      const stringConnect = queryStringConnect(url, database)
 
-    const decodeToken = jwt.verify(TOKEN, secretAcess) as IdecodeAcessToken
+      const sqlQuery = selectMovimentacaoAplicacao(cod, aplicacao)
 
-    const USUA_SIGLA = decodeToken.USUA_SIGLA
+      sql.connect(stringConnect)
 
-    const sql = selectMovimentacaoAplicacao(USUA_SIGLA, aplicacao)
-    const movimentQuery = await MovimentoDiarioRepository.query(sql)
+      const movimentQuery = await sql.query(sqlQuery)
 
-    return movimentQuery
+      return ({
+        message: movimentQuery.recordset,
+        erro: true,
+        status: 400
+      })
+    } catch (e) {
+      return ({
+        message: 'Erro = ' + e,
+        erro: true,
+        status: 400
+      })
+    }
   }
 }
