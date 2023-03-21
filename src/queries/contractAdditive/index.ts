@@ -13,15 +13,15 @@ export const selectAditivoContrato1 = (cod: string, queryString: string) => {
       ADCS_DATA_FIM,
       ADCS_OBS,
       ADCS_NUMERO,
-      (ADCS_QUANTIDADE * ADCS_VLR_UNIT) 
-    AS 
+      (ADCS_QUANTIDADE * ADCS_VLR_UNIT)
+    AS
       VALOR_TOTAL,
-      '1' 
-    AS 
+      '1'
+    AS
       ASS
     FROM
       ADITIVO_CONTRATO_SERVICO
-    INNER JOIN 
+    INNER JOIN
       SERVICOS
     ON
       SERV_COD = ADCS_SERV_COD
@@ -32,8 +32,8 @@ export const selectAditivoContrato1 = (cod: string, queryString: string) => {
     AND
       ADCS_USUA_COD_ASS_1 = ${cod}
     ${queryString}
-  `
-}
+  `;
+};
 
 export const selectAditivoContrato2 = (cod: string, queryString: string) => {
   return `
@@ -50,15 +50,15 @@ export const selectAditivoContrato2 = (cod: string, queryString: string) => {
       ADCS_DATA_FIM,
       ADCS_OBS,
       ADCS_NUMERO,
-      (ADCS_QUANTIDADE * ADCS_VLR_UNIT) 
-    AS 
+      (ADCS_QUANTIDADE * ADCS_VLR_UNIT)
+    AS
       VALOR_TOTAL,
-      '2' 
-    AS 
+      '2'
+    AS
       ASS
     FROM
       ADITIVO_CONTRATO_SERVICO
-    INNER JOIN 
+    INNER JOIN
       SERVICOS
     ON
       SERV_COD = ADCS_SERV_COD
@@ -71,8 +71,8 @@ export const selectAditivoContrato2 = (cod: string, queryString: string) => {
     AND
       ADCS_USUA_COD_ASS_2 = ${cod}
     ${queryString}
-  `
-}
+  `;
+};
 
 export const selectAditivoContrato3 = (cod: string, queryString: string) => {
   return `
@@ -89,15 +89,15 @@ export const selectAditivoContrato3 = (cod: string, queryString: string) => {
       ADCS_DATA_FIM,
       ADCS_OBS,
       ADCS_NUMERO,
-      (ADCS_QUANTIDADE * ADCS_VLR_UNIT) 
-    AS 
+      (ADCS_QUANTIDADE * ADCS_VLR_UNIT)
+    AS
       VALOR_TOTAL,
-      '3' 
-    AS 
+      '3'
+    AS
       ASS
     FROM
       ADITIVO_CONTRATO_SERVICO
-    INNER JOIN 
+    INNER JOIN
       SERVICOS
     ON
       SERV_COD = ADCS_SERV_COD
@@ -112,8 +112,8 @@ export const selectAditivoContrato3 = (cod: string, queryString: string) => {
     AND
       ADCS_USUA_COD_ASS_3 = ${cod}
     ${queryString}
-  `
-}
+  `;
+};
 
 export const selectAditivoContrato4 = (cod: string, queryString: string) => {
   return `
@@ -130,15 +130,15 @@ export const selectAditivoContrato4 = (cod: string, queryString: string) => {
       ADCS_DATA_FIM,
       ADCS_OBS,
       ADCS_NUMERO,
-      (ADCS_QUANTIDADE * ADCS_VLR_UNIT) 
-    AS 
+      (ADCS_QUANTIDADE * ADCS_VLR_UNIT)
+    AS
       VALOR_TOTAL,
-      '4' 
-    AS 
+      '4'
+    AS
       ASS
     FROM
       ADITIVO_CONTRATO_SERVICO
-    INNER JOIN 
+    INNER JOIN
       SERVICOS
     ON
       SERV_COD = ADCS_SERV_COD
@@ -155,20 +155,20 @@ export const selectAditivoContrato4 = (cod: string, queryString: string) => {
     AND
       ADCS_USUA_COD_ASS_4 = ${cod}
     ${queryString}
-  `
-}
+  `;
+};
 
 export const updateAditivoContrato = (pos: string, cod: string, queryString: string) => {
   return `
-    UPDATE 
+    UPDATE
       ADITIVO_CONTRATO_SERVICO
-    SET 
+    SET
       ADCS_ASSINATURA_${pos} = 'S'
       ${queryString}
     WHERE
       ADCS_COD = ${cod}
-  `
-}
+  `;
+};
 
 export const countNumAprovAditivoContrato = (cod: string) => {
   return `
@@ -181,8 +181,8 @@ export const countNumAprovAditivoContrato = (cod: string) => {
             ADITIVO_CONTRATO_SERVICO
           WHERE
             ADCS_COD = ${cod}
-          AND 
-            ADCS_ASSINATURA_1 = 'S' 
+          AND
+            ADCS_ASSINATURA_1 = 'S'
         )
           +
         (
@@ -192,8 +192,8 @@ export const countNumAprovAditivoContrato = (cod: string) => {
             ADITIVO_CONTRATO_SERVICO
           WHERE
             ADCS_COD = ${cod}
-          AND 
-            ADCS_ASSINATURA_2 = 'S' 
+          AND
+            ADCS_ASSINATURA_2 = 'S'
         )
           +
         (
@@ -203,8 +203,8 @@ export const countNumAprovAditivoContrato = (cod: string) => {
               ADITIVO_CONTRATO_SERVICO
           WHERE
               ADCS_COD = ${cod}
-          AND 
-            ADCS_ASSINATURA_3 = 'S' 
+          AND
+            ADCS_ASSINATURA_3 = 'S'
         )
           +
         (
@@ -214,13 +214,13 @@ export const countNumAprovAditivoContrato = (cod: string) => {
               ADITIVO_CONTRATO_SERVICO
           WHERE
               ADCS_COD = ${cod}
-          AND 
-            ADCS_ASSINATURA_4 = 'S' 
+          AND
+            ADCS_ASSINATURA_4 = 'S'
         )
       ) AS NUM
     FROM
       ADITIVO_CONTRATO_SERVICO
     WHERE
         ADCS_COD = ${cod}
-  `
-}
+  `;
+};

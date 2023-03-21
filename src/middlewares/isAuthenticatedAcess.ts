@@ -28,9 +28,7 @@ const isAuthenticated = (
     const cod = decodeToken.codUser
 
     request.globalCodigo = cod
-    console.log('====================================')
-    console.log(request.globalCodigo)
-    console.log('====================================')
+
     return next()
   } catch (e) {
     return response.status(400).json({ message: 'Invalid Token', status: 400 })

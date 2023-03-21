@@ -39,6 +39,7 @@ export default class UserController {
 
     const { USUA_SIGLA, USUA_SENHA_APP, url, database } = request.body
 
+    console.log(USUA_SIGLA)
     const user = await login.execute({
       USUA_SIGLA,
       USUA_SENHA_APP,

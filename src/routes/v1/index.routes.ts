@@ -1,9 +1,9 @@
-import express from 'express'
-import { routerUser } from './user.routes'
+import express from 'express';
+import { routerUser } from './user.routes';
 // import swaggerUi from 'swagger-ui-express'
 // import swaggerDocs from '../../swagger/swagger.json'
-import { routerDailyMoviment } from './dailyMoviment.routes'
-import { routerRequest } from './request.routes'
+import { routerDailyMoviment } from './dailyMoviment.routes';
+import { routerRequest } from './request.routes';
 // import routerCompany from './company.routes'
 // import { routerPurchaseOrder } from './purchaseOrder.routes'
 // import { routerServiceContract } from './serviceContract.routes'
@@ -12,21 +12,27 @@ import { routerRequest } from './request.routes'
 // import { routerContractAdditive } from './additiveContract.routes'
 // import { routerContractAdditiveTerm } from './additiveContractTerm.routes'
 // import { routerResultCenter } from './resultCenter.routes'
-import { routerToken } from './token.routes'
-import isAuthenticatedAcess from '../../middlewares/isAuthenticatedAcess'
+import { routerToken } from './token.routes';
+import isAuthenticatedAcess from '../../middlewares/isAuthenticatedAcess';
+import planilhaCompraRoutes from './planilhaCompra.routes';
+import planilhaCompraDeatils from './planilhaCompraDetails.routes';
 
-export const routerV1 = express.Router()
+export const routerV1 = express.Router();
 // routerV1.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
-routerV1.use('/usuario', routerUser)
+routerV1.use('/usuario', routerUser);
 
-routerV1.use('/token', routerToken)
+routerV1.use('/token', routerToken);
 
-routerV1.use(isAuthenticatedAcess)
+routerV1.use(isAuthenticatedAcess);
 
-routerV1.use('/pedido', routerRequest)
+routerV1.use('/pedido', routerRequest);
 
-routerV1.use('/movimentacao', routerDailyMoviment)
+routerV1.use('/movimentacao', routerDailyMoviment);
+
+routerV1.use('/planilhaCompra', planilhaCompraRoutes);
+
+routerV1.use('/planilhaDetails', planilhaCompraDeatils);
 
 // routerV1.use('/empresa', routerCompany)
 // routerV1.use('/solicitacaoCompra', routerPurchaseOrder)
