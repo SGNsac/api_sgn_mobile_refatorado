@@ -49,7 +49,7 @@ export const validCereFornPedi = async (codUsua: string, cereCod: string, valTot
       if (USCR_VLR_MAX_APROV_PED > 0) {
         if (USCR_VLR_MAX_APROV_PED < parseInt(valTotal)) {
           return ({
-            message: `Pedido ${pediNumero} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar nesse CR`,
+            message: `Pedido ${pediNumero} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar nesse CR 1`,
             error: true,
             status: 400
           });
@@ -110,7 +110,7 @@ export const validCereFornPedi = async (codUsua: string, cereCod: string, valTot
     } else {
       if (USCR_VLR_MAX_APROV_PED < parseInt(valTotal)) {
         return ({
-          message: `Pedido ${pediNumero} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar nesse CR`,
+          message: `Pedido ${pediNumero} não poderá ser aprovado poís valor do pedido acima do valor que o usuario pode aprovar nesse CR 2`,
           error: true,
           status: 400
         });

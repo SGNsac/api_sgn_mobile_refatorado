@@ -39,6 +39,10 @@ export class LoginService {
 
       await sql.connect(stringConnect)
 
+      console.log('====================================')
+      console.log(await sql.connect(stringConnect))
+      console.log('====================================')
+
       const resultVerify = await sql.query(verifyUserSiglaSQL)
 
       if (resultVerify.recordset[0].USUA_SENHA_APP === null) {

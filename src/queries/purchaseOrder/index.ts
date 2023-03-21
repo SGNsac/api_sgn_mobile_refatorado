@@ -1,4 +1,4 @@
-export const selectSoliComp1 = (usuaCod: number) => {
+export const selectSoliComp1 = (usuaCod: string, queryString: string) => {
   return `
     SELECT
       SOCO_COD,
@@ -78,10 +78,16 @@ export const selectSoliComp1 = (usuaCod: number) => {
       SOCO_STATUS = NULL
     AND
       SOCO_USUA_COD_ASS_1 = ${usuaCod}
+<<<<<<< HEAD
   `;
 };
+=======
+    ${queryString}
+  `
+}
+>>>>>>> e70fb1c2729889d9375ebd0f254585345c65e45f
 
-export const selectSoliComp2 = (usuaCod: number) => {
+export const selectSoliComp2 = (usuaCod: string, queryString: string) => {
   return `
     SELECT
       SOCO_COD,
@@ -163,6 +169,7 @@ export const selectSoliComp2 = (usuaCod: number) => {
       SOCO_ASSINATURA_1 = 'S'
     AND
       SOCO_USUA_COD_ASS_2 = ${usuaCod}
+<<<<<<< HEAD
   `;
 };
 
@@ -590,6 +597,11 @@ export const selectSoliCompData = (usuaCod: number, SOCO_DTSOLI: string, pos: st
       SOCO_DTSOLI = '${SOCO_DTSOLI}'
   `;
 };
+=======
+    ${queryString}
+  `
+}
+>>>>>>> e70fb1c2729889d9375ebd0f254585345c65e45f
 
 export const updateASSSolicitacao = (socoCod: string, posCod: string, sqlQuery: string) => {
   return `

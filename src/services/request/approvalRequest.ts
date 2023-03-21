@@ -1,10 +1,18 @@
 
+<<<<<<< HEAD
 import bcrypt from 'bcrypt';
 import sql from 'mssql';
 import { countNumAprovaPedido, updatePedidoASS } from '../../queries/request';
 import { verifyUser } from '../../queries/user';
 import { queryStringConnect } from '../../sql';
 import { selectAprovaPedido } from '../../queries/parametrosGerais';
+=======
+import sql from 'mssql'
+import { countNumAprovaPedido, updatePedidoASS } from '../../queries/request'
+import { queryStringConnect } from '../../sql'
+import { selectAprovaPedido } from '../../queries/parametrosGerais'
+import { verifyValidUser } from '../../utils/validUser'
+>>>>>>> e70fb1c2729889d9375ebd0f254585345c65e45f
 
 export class ApprovalRequestService {
   public async execute (
@@ -17,16 +25,25 @@ export class ApprovalRequestService {
     database:string
   )/*: Promise<IResponse> */ {
     try {
+<<<<<<< HEAD
       const verifyUserSiglaSQL = verifyUser(codUsua);
+=======
+      // const verifyUserSiglaSQL = verifyUser(codUsua)
+>>>>>>> e70fb1c2729889d9375ebd0f254585345c65e45f
 
       const stringConnect = queryStringConnect(url, database);
 
       await sql.connect(stringConnect);
 
+<<<<<<< HEAD
       const resultVerify = await sql.query(verifyUserSiglaSQL);
+=======
+      const verifyValidUserFunc = await verifyValidUser({ codUsua, url, database, senhaApp: USUA_SENHA_APP, tipo: '', valorTotalSoco: 0 })
+>>>>>>> e70fb1c2729889d9375ebd0f254585345c65e45f
 
-      if (resultVerify.recordset[0].length <= 0) {
+      if (verifyValidUserFunc.error === true) {
         return ({
+<<<<<<< HEAD
           message: 'Úsuario não existente',
           error: true,
           status: 400
@@ -43,6 +60,12 @@ export class ApprovalRequestService {
           error: true,
           status: 400
         });
+=======
+          message: verifyValidUserFunc.message,
+          error: verifyValidUserFunc.error,
+          status: verifyValidUserFunc.status
+        })
+>>>>>>> e70fb1c2729889d9375ebd0f254585345c65e45f
       }
 
       let sqlQuery = '';
